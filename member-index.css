@@ -201,16 +201,16 @@ body {
 }
 
 .btn-order-more {
-  background: #28a745;
+  background: #ff6b35;
   color: #fff;
-  padding: 14px 40px;
+  padding: 15px 40px;
   border-radius: 50px;
   font-weight: 700;
-  font-size: 1.1rem;
   text-decoration: none;
   display: inline-block;
   transition: 0.3s;
   border: none;
+  font-size: 0.9rem;
 }
 
 /* Footer */
@@ -293,9 +293,30 @@ body {
     font-size: 0.7rem;
     padding: 6px 12px;
   }
+}
 
-  .btn-order-more {
-    padding: 10px 25px;
-    font-size: 0.9rem;
-  }
+.btn-outline-danger-custom {
+  border: 2px solid #bd6f35;
+  color: #bd6f35;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-danger-custom:hover {
+  background: #bd6f35;
+  color: #fff;
+  border-color: #bd6f35;
+}
+
+.btn-success-custom {
+  background: #bd6f35;
+  border: 2px solid #bd6f35;
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.btn-success-custom:hover {
+  background: #a85f2b;
+  border-color: #a85f2b;
+  color: #fff;
 }

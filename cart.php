@@ -57,9 +57,20 @@ if (!file_exists($qr_dir)) {
   mkdir($qr_dir, 0777, true);
 }
 ?>
+
+<style>
+  .img-thumbnail {
+    transition: .3s;
+    border-radius: 10px;
+  }
+
+  .img-thumbnail:hover {
+    transform: scale(1.08);
+  }
+</style>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -76,9 +87,7 @@ if (!file_exists($qr_dir)) {
   <link href="assets/css/style.css" rel="stylesheet">
   link
 </head>
-
 <body>
-
   <!-- ======= Top Bar ======= -->
   <section id="topbar" class="d-flex align-items-center fixed-top">
     <div class="container-fluid container-xl d-flex align-items-center justify-content-center justify-content-lg-start">
@@ -93,7 +102,6 @@ if (!file_exists($qr_dir)) {
       <div class="logo me-auto">
         <h1><a href="index.php">Deluxe restaurant</a></h1>
       </div>
-
       <nav id="navbar" class="navbar order-last order-lg-0">
         <ul>
           <li><a class="nav-link scrollto" href="index.php">Home</a></li>
@@ -107,15 +115,12 @@ if (!file_exists($qr_dir)) {
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav>
-
       <a href="index.php#menu" class="book-a-table-btn scrollto">Return</a>
     </div>
   </header>
-
   <main id="main" style="margin-top: 110px;">
     <section class="inner-page">
       <div class="container">
-
         <div class="text-center my-4">
           <h1 class="display-5 fw-bold text-uppercase" style="color: #ffb03b;">My Shopping Cart</h1>
           <p class="lead"><a href="foodzone.php" class="btn btn-outline-warning btn-sm">← Continue Shopping!</a></p>
@@ -162,12 +167,11 @@ if (!file_exists($qr_dir)) {
                 <th>Item ID</th>
                 <th>Photo</th>
                 <th>Name</th>
-                <th>Description</th>
+                <th>Ingredients</th>
                 <th>Category</th>
                 <th>Price</th>
                 <th>Quantity</th>
                 <th>Total Cost</th>
-                <th>QR Code (Ingredients)</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -189,24 +193,11 @@ if (!file_exists($qr_dir)) {
                 echo "<td class='fw-bold'>#" . $row['cart_id'] . "</td>";
                 echo "<td><a href='images/" . $photo_encoded . "' target='_blank'><img src='images/" . $photo_encoded . "' class='img-thumbnail shadow-sm' style='max-width: 80px; height: 60px; object-fit: cover;'></a></td>";
                 echo "<td class='fw-bold text-start'>" . htmlspecialchars($row['food_name']) . "</td>";
-                echo "<td class='text-start text-muted small' style='max-width: 200px;'>" . htmlspecialchars($row['food_description']) . "</td>";
+                echo "<td class='text-center'><img src='" . $filename . "'class='img-thumbnail shadow-sm'style='max-width:90px; cursor:pointer'alt='QR Code'data-bs-toggle='modal'data-bs-target='#qrModal'data-qr-src='" . $filename . "'data-food-name='" . htmlspecialchars($row['food_name']) . "'data-ingredients='" . htmlspecialchars($row['food_description']) . "'><divclass='mt-2'><small class='text-success fw-semibold'>Scan to View</small></divclass=></td>";
                 echo "<td><span class='badge bg-secondary'>" . htmlspecialchars($row['category_name']) . "</span></td>";
                 echo "<td class='text-success fw-bold'>" . $symbol['currency_symbol'] . number_format($row['food_price'], 2) . "</td>";
                 echo "<td><span class='badge bg-dark px-2.5 py-2'>" . $row['quantity_value'] . "</span></td>";
                 echo "<td class='text-danger fw-bold'>" . $symbol['currency_symbol'] . number_format($row['total'], 2) . "</td>";
-
-                // Codul QR interactiv care deschide fereastra modală la click
-                echo "<td>";
-                echo "  <img src='" . $filename . "' ";
-                echo "       class='img-thumbnail shadow-sm' ";
-                echo "       style='max-width: 70px; cursor: pointer;' ";
-                echo "       alt='QR Code' ";
-                echo "       data-bs-toggle='modal' ";
-                echo "       data-bs-target='#qrModal' ";
-                echo "       data-qr-src='" . $filename . "' ";
-                echo "       data-food-name='" . htmlspecialchars($row['food_name']) . "' ";
-                echo "       data-ingredients='" . htmlspecialchars($row['food_description']) . "'>";
-                echo "</td>";
 
                 // Zona de acțiuni
                 echo "<td>";
@@ -217,7 +208,6 @@ if (!file_exists($qr_dir)) {
                 echo "    </a>";
                 echo "  </div>";
                 echo "</td>";
-
                 echo "</tr>";
               }
               mysqli_free_result($result);
@@ -235,7 +225,6 @@ if (!file_exists($qr_dir)) {
           </div>
           <p class="text-muted small">&copy; 2026 Saceanu Ionut Sorin. All Rights Reserved</p>
         </footer>
-
       </div>
     </section>
   </main>
@@ -272,10 +261,8 @@ if (!file_exists($qr_dir)) {
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       var qrModal = document.getElementById('qrModal');
-
       qrModal.addEventListener('show.bs.modal', function(event) {
         var triggerImage = event.relatedTarget;
-
         var qrSrc = triggerImage.getAttribute('data-qr-src');
         var foodName = triggerImage.getAttribute('data-food-name');
         var ingredients = triggerImage.getAttribute('data-ingredients');
@@ -286,7 +273,5 @@ if (!file_exists($qr_dir)) {
       });
     });
   </script>
-
 </body>
-
 </html>

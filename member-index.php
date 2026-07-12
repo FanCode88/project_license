@@ -46,13 +46,10 @@ $reservations = mysql_query("SELECT r.*, t.table_name
                              FROM reservations_details r
                              LEFT JOIN tables t ON r.table_id = t.table_id
                              WHERE r.member_id = '$memberId'
-                             ORDER BY r.Reserve_Date DESC")
-  or die("Eroare la rezervări: " . mysql_error());
-?>
+                             ORDER BY r.Reserve_Date DESC") or die("Eroare la rezervări: " . mysql_error()); ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -69,10 +66,8 @@ $reservations = mysql_query("SELECT r.*, t.table_name
   <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
   <link href="assets/css/style.css" rel="stylesheet">
-   <link href="member-index.css" rel="stylesheet">
-
+  <link href="member-index.css" rel="stylesheet">
 </head>
-
 <body>
 
   <!-- ======= Top Bar ======= -->
@@ -180,9 +175,7 @@ $reservations = mysql_query("SELECT r.*, t.table_name
               while ($row = mysql_fetch_array($result)) {
                 echo "<tr>";
                 echo "<td><strong>#" . $row['order_id'] . "</strong></td>";
-                echo '<td><a href="images/' . $row['food_photo'] . '" target="_blank">
-                                        <img src="images/' . $row['food_photo'] . '" alt="Food">
-                                      </a></td>';
+                echo '<td><a href="images/' . $row['food_photo'] . '" target="_blank"><img src="images/' . $row['food_photo'] . '" alt="Food"></a></td>';
                 echo "<td><strong>" . $row['food_name'] . "</strong></td>";
                 echo "<td><span class='badge bg-secondary'>" . $row['category_name'] . "</span></td>";
                 echo "<td>" . $symbol['currency_symbol'] . number_format($row['food_price'], 2) . "</td>";
@@ -190,26 +183,22 @@ $reservations = mysql_query("SELECT r.*, t.table_name
                 echo "<td><strong style='color:#ff7a18;'>" . $symbol['currency_symbol'] . number_format($row['total'], 2) . "</strong></td>";
                 echo "<td>" . date('d.m.Y', strtotime($row['delivery_date'])) . "</td>";
                 echo '<td>
-                                        <div class="d-flex gap-2 justify-content-center flex-wrap">
-                                            <a href="cont.php?action=cancel&id=' . $row['order_id'] . '"
-                                               class="btn btn-sm btn-outline-danger-custom"
-                                               onclick="return confirm(\'Ești sigur că vrei să anulezi această comandă?\')">
-                                                <i class="bi bi-x-circle"></i> Anulează
-                                            </a>
-                                            <a href="cont.php?action=order_again&id=' . $row['order_id'] . '"
-                                               class="btn btn-sm btn-success-custom"
-                                               onclick="return confirm(\'Ești sigur că vrei să comanzi din nou acest produs?\')">
-                                                <i class="bi bi-arrow-repeat"></i> Repetă
-                                            </a>
-                                        </div>
-                                      </td>';
+<div class="d-flex gap-2 justify-content-center flex-wrap">
+<a href="cont.php?action=cancel&id=' . $row['order_id'] . '" class="btn btn-sm btn-outline-danger-custom" onclick="return confirm(\'Ești sigur că vrei să anulezi această comandă?\')">
+<i class="bi bi-x-circle"></i> Anulează
+</a>
+
+<a href="cont.php?action=order_again&id=' . $row['order_id'] . '" class="btn btn-sm btn-success-custom" onclick="return confirm(\'Ești sigur că vrei să comanzi din nou acest produs?\')">
+<i class="bi bi-arrow-repeat"></i> Repetă
+</a>
+</div>
+</td>';
                 echo "</tr>";
               }
               ?>
             </tbody>
           </table>
         </div>
-
         <hr style="margin: 35px 0;">
 
         <!-- ===== SECȚIUNE REZERVĂRI ===== -->
@@ -218,7 +207,6 @@ $reservations = mysql_query("SELECT r.*, t.table_name
           Rezervări Mese
           <span class="subtitle">— vezi rezervările tale</span>
         </div>
-
         <div class="table-responsive-custom">
           <table class="table table-hover align-middle mb-0">
             <thead>
@@ -238,13 +226,7 @@ $reservations = mysql_query("SELECT r.*, t.table_name
                 echo "<td>" . htmlspecialchars($res['table_name']) . "</td>";
                 echo "<td>" . date('d.m.Y', strtotime($res['Reserve_Date'])) . "</td>";
                 echo "<td>" . date('H:i', strtotime($res['Reserve_Time'])) . "</td>";
-                echo '<td>
-    <a href="javascript:void(0);"
-       class="btn btn-sm btn-outline-danger-custom"
-       onclick="cancelReservation(' . $res['ReservationID'] . ', this)">
-        <i class="bi bi-x-circle"></i> Anulează
-    </a>
-</td>';
+                echo '<td><a href="javascript:void(0);"class="btn btn-sm btn-outline-danger-custom"onclick="cancelReservation(' . $res['ReservationID'] . ', this)"><i class="bi bi-x-circle"></i> Anulează</a></td>';
                 echo "</tr>";
               }
 
@@ -256,7 +238,6 @@ $reservations = mysql_query("SELECT r.*, t.table_name
             </tbody>
           </table>
         </div>
-
       </div>
       <!-- ===== SFÂRȘIT MAIN-CARD ===== -->
 
@@ -271,7 +252,6 @@ $reservations = mysql_query("SELECT r.*, t.table_name
           Designed by <a href="#" style="color:#ff7a18; text-decoration:none;">Saceanu Ionut Sorin</a>
         </div>
       </div>
-
     </div>
   </main>
 
@@ -286,9 +266,6 @@ $reservations = mysql_query("SELECT r.*, t.table_name
   <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
   <script src="assets/js/main.js"></script>
-
-
-
 </body>
 
 </html>

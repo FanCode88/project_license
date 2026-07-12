@@ -53,17 +53,15 @@ if (isset($_POST['Submit'])) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Food Plaza: Foods</title>
-
   <!-- Am adăugat Bootstrap 5 pentru un design complet modern și adaptabil pe telefon -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Font elegant și iconițe -->
   <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,600,700" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-
   <style>
     body {
       font-family: 'Poppins', sans-serif;
-      background-color: #f8f9fa;
+      background-color: orange;
       color: #333;
     }
 
@@ -142,6 +140,66 @@ if (isset($_POST['Submit'])) {
     .footer a:hover {
       color: #bd6f2f;
     }
+
+    .ingredient-qr {
+      text-align: center;
+    }
+
+    .ingredient-qr img {
+      transition: .3s;
+      border-radius: 10px;
+    }
+
+    .ingredient-qr img:hover {
+      transform: scale(1.08);
+    }
+
+    .ingredient-qr strong {
+      display: block;
+      color: #198754;
+      margin-top: 6px;
+      font-size: 15px;
+    }
+
+    .ingredient-qr small {
+      color: #6c757d;
+      line-height: 1.4;
+    }
+
+    .table {
+      margin: 0 auto;
+    }
+
+    .table th,
+    .table td {
+      vertical-align: middle;
+    }
+
+    .table th {
+      text-align: center;
+    }
+
+    .btn-outline-success {
+      background: #ff6b35;
+      color: #ffff;
+      border: none;
+    }
+
+    .btn-outline-success:hover {
+      background: orangered;
+    }
+
+    .price-btn {
+      color: #ff6b35;
+      font-weight: 700;
+    }
+
+    .ingredient-text {
+      color: #ff6b35 !important;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.3px;
+    }
   </style>
 </head>
 
@@ -173,8 +231,7 @@ if (isset($_POST['Submit'])) {
       <p class="lead mb-0">Explore our delicious menu tailored just for you</p>
     </div>
   </div>
-
-  <div class="container">
+  <div class="container" style="max-width:1200px;">
 
     <!-- Zona Filtrare Categorie Stil Card -->
     <div class="card p-4 mb-4 shadow-sm border-0 bg-white rounded-3">
@@ -206,37 +263,33 @@ if (isset($_POST['Submit'])) {
         <table class="table table-hover align-middle text-center mb-0">
           <thead class="table-light">
             <tr>
-              <th scope="col">Photo</th>
-              <th scope="col" class="text-start">Food Name</th>
-              <th scope="col">QR Code</th>
-              <th scope="col" class="text-start" style="width: 30%;">Description</th>
-              <th scope="col">Category</th>
-              <th scope="col">Price</th>
-              <th scope="col">Action</th>
+              <th style="width:12%">Photo</th>
+              <th style="width:22%">Food Name</th>
+              <th style="width:22%">Ingredients</th>
+              <th style="width:14%">Category</th>
+              <th style="width:12%">Price</th>
+              <th style="width:18%">Action</th>
             </tr>
           </thead>
           <tbody>
             <?php
             $count = mysql_num_rows($result);
             if (isset($_POST['Submit']) && $count < 1) {
-              echo "<tr><td colspan='7' class='py-5 text-muted'><i class='bi bi-exclamation-circle fs-3 d-block mb-2'></i> No products found in this category.</td></tr>";
+              echo "<tr><td colspan='6' class='py-5 text-muted'><i class='bi bi-exclamation-circle fs-3 d-block mb-2'></i> No products found in this category.</td></tr>";
             } else {
               $symbol = mysql_fetch_assoc($currencies);
-
               while ($row = mysql_fetch_assoc($result)) {
                 echo "<tr>";
                 // Foto Produs
                 echo "<td><a href='images/" . $row['food_photo'] . "' target='_blank'><img src='images/" . $row['food_photo'] . "' width='80' height='70' class='shadow-sm border'></a></td>";
                 // Nume
-                echo "<td class='fw-bold text-start'>" . htmlspecialchars($row['food_name']) . "</td>";
-                // QR Code
-                echo "<td><a href='images/" . $row['foodQR'] . "' target='_blank'><img src='images/" . $row['foodQR'] . "' width='65' height='65' class='shadow-sm border'></a></td>";
+                echo "<td class='fw-bold'>" . htmlspecialchars($row['food_name']) . "</td>";
                 // Descriere
-                echo "<td class='text-start text-muted small'>" . htmlspecialchars($row['food_description']) . "</td>";
+                echo "<td><div class='ingredient-qr'><a href='images/" . $row['foodQR'] . "' target='_blank'><img src='images/" . $row['foodQR'] . "' width='90' height='90' class='shadow-sm border rounded'></a><div class='mt-2'><small class='ingredient-text'>Scan to View</small></div></div></td>";
                 // Categorie
                 echo "<td><span class='badge bg-light text-dark border px-3 py-2'>" . htmlspecialchars($row['category_name']) . "</span></td>";
                 // Pret
-                echo "<td class='fw-bold text-success fs-5'>" . $symbol['currency_symbol'] . " " . number_format($row['food_price'], 2) . "</td>";
+                echo "<td class='fw-bold fs-5'><span class='price-btn'>" . $symbol['currency_symbol'] . " " . number_format($row['food_price'], 2) . "</span></td>";
                 // Buton adaugare
                 echo '<td><a href="cart-exec.php?id=' . $row['food_id'] . '" class="btn btn-outline-success btn-sm rounded-pill px-3"><i class="bi bi-cart-plus"></i> Add To Cart</a></td>';
                 echo "</tr>";
@@ -249,7 +302,6 @@ if (isset($_POST['Submit'])) {
         </table>
       </div>
     </div>
-
   </div>
 
   <!-- Subsol / Footer Complet Negru/Modern -->
