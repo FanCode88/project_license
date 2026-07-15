@@ -150,7 +150,6 @@ h6 {
   background: #ffb03b;
   color: #fff;
   border-radius: 50px;
-  margin: 0 0 0 20px;
   padding: 10px 25px;
   font-size: 13px;
   font-weight: 500;
@@ -162,6 +161,25 @@ h6 {
 .book-a-table-btn:hover {
   background: #ffa012;
   color: #fff;
+}
+
+.book-a-table-btn-home {
+  background: #ffb03b;
+  color: #fff;
+  border-radius: 50px;
+  padding: 9px 23px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  transition: 0.3s;
+  white-space: nowrap;
+  margin-left: 15px;
+  font-weight: bold;
+}
+
+.book-a-table-btn-home:hover {
+  color: #ffff;
+  background: orangered;
 }
 
 @media (max-width: 992px) {
@@ -384,6 +402,10 @@ h6 {
 
 .navbar-mobile .dropdown > .dropdown-active {
   display: block;
+}
+
+.video-box {
+  border-radius: 10px;
 }
 
 /*--------------------------------------------------------------

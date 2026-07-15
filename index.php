@@ -176,7 +176,7 @@ try {
 
       <!-- Butonul din dreapta sus -->
       <?php if (isset($_SESSION['SESS_MEMBER_ID'])): ?>
-        <a href="logout.php" class="book-a-table-btn scrollto">Logout</a>
+        <a href="logout.php" class="book-a-table-btn-home scrollto">Logout</a>
       <?php else: ?>
         <a href="#login" class="book-a-table-btn scrollto">Login</a>
       <?php endif; ?>
@@ -256,7 +256,7 @@ try {
 
           <!-- Coloana Stângă: Video / Imagine de fundal -->
           <div class="col-lg-6 video-box" style="background-image: url('assets/img/about.jpg');">
-            <a href="https://www.youtube.com/watch?v=jDDaplaOz7Q" class="venobox play-btn mb-4" data-vbtype="video" data-autoplay="true"></a>
+            <a href="https://www.youtube.com/watch?v=ZVhgcKr3lMU" class="venobox play-btn mb-4" data-vbtype="video" data-autoplay="true"></a>
           </div>
 
           <!-- Coloana Dreaptă: Panoul de Formulare (cu Tab-uri) -->
@@ -539,7 +539,7 @@ try {
           <p>Te invităm să faci o rezervare pentru o experiență culinară memorabilă.</p>
         </div>
 
-        <div class="form-container-box max-w-600 mx-auto text-center">
+        <div class="form-container-box max-w-600 mx-auto gap-2 text-center">
           <div class="mb-4 d-flex justify-content-center gap-2 flex-wrap">
             <a href="member-index.php" class="badge bg-secondary p-2">Home</a>
             <a href="cart.php" class="badge bg-primary p-2">Cart [<?php echo $num_items; ?>]</a>
