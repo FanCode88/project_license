@@ -1,50 +1,66 @@
 <?php
-//checking connection and connecting to a database
+// Pornim sesiunea și forțăm afișarea erorilor pentru depanare
+session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Verificarea conexiunii și conectarea la baza de date folosind MySQLi modern
 require_once('connection/config.php');
-//Connect to mysql server
-$link = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
+
+$link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
 if (!$link) {
-  die('Failed to connect to server: ' . mysql_error());
+    die('Failed to connect to server: ' . mysqli_connect_error());
 }
 
-//Select database
-$db = mysql_select_db(DB_DATABASE);
-if (!$db) {
-  die("Unable to select database");
-}
-
-//Function to sanitize values received from the form. Prevents SQL injection
-function clean($str)
+// Funcție pentru curățarea valorilor primite din formular (prevenire SQL injection)
+function clean($link, $str)
 {
-  $str = @trim($str);
-  if (get_magic_quotes_gpc()) {
-    $str = stripslashes($str);
-  }
-  return mysql_real_escape_string($str);
+    $str = trim($str);
+    return mysqli_real_escape_string($link, $str);
 }
 
-//Sanitize the POST values
-$OldPassword = clean($_POST['opassword']);
-$NewPassword = clean($_POST['npassword']);
-$ConfirmNewPassword = clean($_POST['cpassword']);
+// Curățarea valorilor din POST
+$OldPassword = clean($link, $_POST['opassword']);
+$NewPassword = clean($link, $_POST['npassword']);
+$ConfirmNewPassword = clean($link, $_POST['cpassword']);
 
-// check if the 'id' variable is set in URL
+// Verificăm dacă noua parolă coincide cu confirmarea ei
+if ($NewPassword !== $ConfirmNewPassword) {
+    mysqli_close($link);
+    header("Location: reset-failed.php?error=mismatch");
+    exit();
+}
+
+// Verificăm dacă variabila 'id' este setată în URL
 if (isset($_GET['id'])) {
-  // get id value
-  $id = $_GET['id'];
+    $id = (int) $_GET['id'];
 
-  // update the entry
-  $result = mysql_query("UPDATE members SET passwd='" . md5($_POST['npassword']) . "' WHERE member_id='$id' AND passwd='" . md5($_POST['opassword']) . "'")
-    or die("Password changing failed! Please try again after a few minutes");
+    $hashed_old_password = md5($OldPassword);
+    $hashed_new_password = md5($NewPassword);
 
-  if ($result) {
-    // redirect back to the member profile
-    header("Location: member-profile.php");
-  } else {
-    header("Location: reset-failed.php"); // failed to update password
-  }
-} else
-// if id isn't set, give an error
-{
-  die("Password changing failed! Please try again after a few minutes");
+    // Folosim prepared statements pentru securitate maximă împotriva SQL injection
+    $stmt = mysqli_prepare($link, "UPDATE members SET passwd = ? WHERE member_id = ? AND passwd = ?");
+    mysqli_stmt_bind_param($stmt, "sis", $hashed_new_password, $id, $hashed_old_password);
+
+    $success = mysqli_stmt_execute($stmt);
+
+    if ($success && mysqli_stmt_affected_rows($stmt) > 0) {
+        mysqli_stmt_close($stmt);
+        mysqli_close($link);
+        // Redirecționare înapoi la profilul membrului
+        header("Location: member-profile.php?success=password_changed");
+        exit();
+    } else {
+        mysqli_stmt_close($stmt);
+        mysqli_close($link);
+        // Eșec la actualizarea parolei (parola veche greșită sau ID invalid)
+        header("Location: reset-failed.php");
+        exit();
+    }
+} else {
+    mysqli_close($link);
+    // Dacă ID-ul nu este setat, oprim execuția
+    die("Password changing failed! Please try again after a few minutes");
 }
+?>

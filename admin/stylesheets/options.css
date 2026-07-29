@@ -1,0 +1,191 @@
+/* Stiluri Moderne - Temă Portocaliu (Options Management) */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #faf7f5;
+  color: #2d3748;
+  margin: 0;
+  padding: 0;
+}
+
+#page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Antet (Header & Navigare) */
+#header {
+  background: #1a202c;
+  color: #ffffff;
+  padding: 24px 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+#header h1 {
+  margin: 0 0 16px 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #ff8c00;
+}
+
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.nav-links a {
+  color: #a0aec0;
+  background: #2d3748;
+  padding: 9px 16px;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: #ffffff;
+  background: #ff8c00;
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
+}
+
+.nav-links a.logout {
+  background: #fff5f5;
+  color: #e53e3e;
+  border: 1px solid #fed7d7;
+}
+
+.nav-links a.logout:hover {
+  background: #e53e3e;
+  color: #ffffff;
+}
+
+/* Conținut Principal și Layout Grid pentru Carduri */
+#container {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 35px auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.forms-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 25px;
+  padding: 10px 0;
+}
+
+.allocation-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+  border: 1px solid #edf2f7;
+  box-sizing: border-box;
+  max-width: none !important; /* Suprascrie stilul inline vechi pentru flexibilitate în grid */
+}
+
+.allocation-card h3 {
+  margin: 0 0 20px 0;
+  color: #1a202c;
+  font-size: 18px;
+  font-weight: 700;
+  border-bottom: 2px solid #f7fafc;
+  padding-bottom: 10px;
+}
+
+/* Formulare și Etichete */
+.form-group {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #718096;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.textfield,
+select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #f7fafc;
+  color: #2d3748;
+  font-size: 14px;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: all 0.25s ease;
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+.textfield:focus,
+select:focus {
+  outline: none;
+  border-color: #ff8c00;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
+}
+
+/* Butoane */
+.btn-primary,
+input[type='submit'] {
+  background-color: #ff8c00;
+  color: #ffffff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.25);
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.btn-primary:hover,
+input[type='submit']:hover {
+  background-color: #e07b00;
+  box-shadow: 0 6px 16px rgba(255, 140, 0, 0.35);
+  transform: translateY(-1px);
+}
+
+/* Elemente Decorative și Utilitare */
+hr {
+  border: 0;
+  height: 1px;
+  background: #edf2f7;
+  margin: 40px 0;
+}
+
+/* Subsol (Footer) */
+#footer {
+  background: #ffffff;
+  border-top: 1px solid #edf2f7;
+  padding: 24px;
+  text-align: center;
+  color: #a0aec0;
+  font-size: 13px;
+  margin-top: auto;
+}

@@ -1,72 +1,83 @@
 <?php
-//Start session
-session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 require_once('auth.php');
-
-//Include database connection details
 require_once('connection/config.php');
 
-//Connect to mysql server
-$link = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
+$link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
 if (!$link) {
-  die('Failed to connect to server: ' . mysql_error());
+    die('Failed to connect to server: ' . mysqli_connect_error());
 }
 
-//Select database
-$db = mysql_select_db(DB_DATABASE);
-if (!$db) {
-  die("Unable to select database");
-}
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['item'], $_POST['action'])) {
 
-//Function to sanitize values received from the form. Prevents SQL injection
-function clean($str)
-{
-  $str = @trim($str);
-  if (get_magic_quotes_gpc()) {
-    $str = stripslashes($str);
-  }
-  return mysql_real_escape_string($str);
-}
+    if (!isset($_SESSION['SESS_MEMBER_ID'])) {
+        mysqli_close($link);
+        header("Location: cart.php?error=" . urlencode("Sesiunea a expirat. Te rugăm să te reautentifici."));
+        exit();
+    }
 
-if (isset($_POST['quantity']) && isset($_POST['item'])) {
-  //get quantity_id
-  $quantity_id = clean($_POST['quantity']);
+    $member_id = (int) $_SESSION['SESS_MEMBER_ID'];
+    $cart_id = (int) $_POST['item'];
+    $current_qty = isset($_POST['quantity']) ? (int) $_POST['quantity'] : 1;
+    $action = $_POST['action'];
 
-  //get member_id from session
-  $member_id = $_SESSION['SESS_MEMBER_ID'];
+    // Modificare cantitate
+    if ($action === 'plus') {
+        $new_qty = $current_qty + 1;
+    } elseif ($action === 'minus') {
+        $new_qty = $current_qty - 1;
+    } else {
+        $new_qty = $current_qty;
+    }
 
-  //get cart_id
-  $cart_id = clean($_POST['item']);
-  //$cart_id = 5;
+    if ($new_qty < 1) {
+        $new_qty = 1;
+    }
 
-  //get the quantity value based on quantity_id
-  $qry_select = mysql_query("SELECT * FROM quantities WHERE quantity_id='$quantity_id'")
-    or die("The system is experiencing technical issues. Please try again after some few minutes.");
+    $flag_0 = 0; // Se caută doar produsele active din coș (necomandate)
 
-  //storing the quantity_value into a variable
-  $row = mysql_fetch_array($qry_select);
-  $quantity_value = $row['quantity_value'];
+    // Obținere preț unitar
+    $stmt_price = mysqli_prepare($link, "
+        SELECT food_details.food_price
+        FROM food_details
+        INNER JOIN cart_details ON cart_details.food_id = food_details.food_id
+        WHERE cart_details.member_id = ? AND cart_details.flag = ? AND cart_details.cart_id = ?
+    ");
+    mysqli_stmt_bind_param($stmt_price, "iii", $member_id, $flag_0, $cart_id);
+    mysqli_stmt_execute($stmt_price);
+    $result_price = mysqli_stmt_get_result($stmt_price);
 
-  //get the price of a food based on cart_details and food_details tables
-  $result = mysql_query("SELECT * FROM food_details,cart_details WHERE cart_details.member_id='$member_id' AND cart_details.flag='$flag_0' AND cart_details.food_id=food_details.food_id AND cart_details.cart_id='$cart_id'") or die("A problem has occured ... \n" . "Our team is working on it at the moment ... \n" . "Please check back after few hours.");
+    if ($row_price = mysqli_fetch_assoc($result_price)) {
+        $food_price = (float) $row_price['food_price'];
+        mysqli_stmt_close($stmt_price);
 
-  //storing the value of food price into a variable
-  $row = mysql_fetch_array($result);
-  $food_price = $row['food_price'];
+        // Recalculare total
+        $total = $new_qty * $food_price;
 
-  //perform a simple calculation to get a total value of a food based on quantity_value and food_price
-  $total = $quantity_value * $food_price;
+        // Actualizare cantitate în coș
+        $stmt_update = mysqli_prepare($link, "UPDATE cart_details SET quantity_id = ?, total = ? WHERE cart_id = ? AND member_id = ? AND flag = ?");
+        mysqli_stmt_bind_param($stmt_update, "idiii", $new_qty, $total, $cart_id, $member_id, $flag_0);
+        mysqli_stmt_execute($stmt_update);
+        mysqli_stmt_close($stmt_update);
 
-  //Create UPDATE query (updates total and quantity_id in the cart based on cart_id and member_id)
-  $qry_update = "UPDATE cart_details SET quantity_id='$quantity_id', total='$total' WHERE cart_id='$cart_id' AND member_id='$member_id'";
-  mysql_query($qry_update);
-
-  if ($qry_update) {
-    header("location: cart.php");
-  } else {
-    //Do nothing
-  }
+        mysqli_close($link);
+        header("Location: cart.php");
+        exit();
+    } else {
+        // Dacă nu a fost găsit în coșul activ (flag = 0)
+        mysqli_stmt_close($stmt_price);
+        mysqli_close($link);
+        header("Location: cart.php?error=" . urlencode("Produsul nu există în coș sau a fost deja comandat."));
+        exit();
+    }
 } else {
-  die("Something went wrong! Our technical team are working on solving the problem. Please try again after few minutes.");
+    mysqli_close($link);
+    header("Location: cart.php");
+    exit();
 }

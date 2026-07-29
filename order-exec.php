@@ -1,118 +1,98 @@
 <?php
-//Start session
-session_start();
+// Start session
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 require_once('auth.php');
-
-//Include database connection details
 require_once('connection/config.php');
 
-//Connect to mysql server using MySQLi
-$link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
-if (!$link) {
-  die('Failed to connect to server: ' . mysqli_connect_error());
+// Conectare la baza de date prin PDO
+try {
+    $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Eroare la conectare: " . $e->getMessage());
 }
 
-//Function to sanitize values received from the form. Prevents SQL injection
-function clean($link, $str)
-{
-  $str = @trim($str);
-  if (get_magic_quotes_gpc()) {
-    $str = stripslashes($str);
-  }
-  return mysqli_real_escape_string($link, $str);
+if (!isset($_SESSION['SESS_MEMBER_ID'])) {
+    header("Location: index.php#login");
+    exit();
 }
 
-//get member_id from session
-$member_id = $_SESSION['SESS_MEMBER_ID'];
+$member_id = (int) $_SESSION['SESS_MEMBER_ID'];
+$id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
-//checks whether the member has a billing address setup
-//get the billing_id from the billing_details table based on the member_id in auth.php
-$qry_select = mysqli_query($link, "SELECT * FROM billing_details WHERE member_id='$member_id'")
-  or die("The system is experiencing technical issues.\n Our team is working on it.\nPlease try again after some few minutes.");
-
-if (mysqli_num_rows($qry_select) > 0 && isset($_GET['id'])) {
-
-  //get cart_id
-  $id = mysqli_real_escape_string($link, $_GET['id']);
-
-  //define default values for flag_0 and flag_1
-  $flag_0 = 0;
-  $flag_1 = 1;
-
-  //retrive a timezone from the timezones table
-  $timezones = mysqli_query($link, "SELECT * FROM timezones WHERE flag='$flag_1'")
-    or die("Something is wrong. \n Our team is working on it at the moment.\n Please check back after some few minutes.");
-
-  $row = mysqli_fetch_assoc($timezones); //gets retrieved row
-
-  $active_reference = $row['timezone_reference']; //gets active timezone
-
-  date_default_timezone_set($active_reference); //sets the default timezone for use
-
-  $time_stamp = date("H:i:s"); //gets the current time
-
-  $delivery_date = date("Y-m-d"); //gets the current date
-
-  //storing the billing_id into a variable
-  $row = mysqli_fetch_array($qry_select);
-  $billing_id = $row['billing_id'];
-
-  // ÎNCEPE TRANZACȚIA
-  mysqli_begin_transaction($link);
-
-  try {
-    // Verifică dacă produsul există în coș și aparține utilizatorului
-    $check_query = "SELECT cart_id FROM cart_details WHERE cart_id='$id' AND member_id='$member_id' AND flag='$flag_0'";
-    $check_result = mysqli_query($link, $check_query);
-
-    if (mysqli_num_rows($check_result) == 0) {
-      throw new Exception("Produsul nu există în coș sau este deja comandat.");
-    }
-
-    //Create INSERT query
-    $qry_create = "INSERT INTO orders_details(member_id, billing_id, cart_id, delivery_date, flag, time_stamp)
-                       VALUES('$member_id', '$billing_id', '$id', '$delivery_date', '$flag_0', '$time_stamp')";
-
-    if (!mysqli_query($link, $qry_create)) {
-      throw new Exception("Eroare la salvarea comenzii: " . mysqli_error($link));
-    }
-
-    //Create UPDATE query (updates flag value in the cart_details table)
-    $qry_update = "UPDATE cart_details SET flag='$flag_1' WHERE cart_id='$id' AND member_id='$member_id'";
-
-    if (!mysqli_query($link, $qry_update)) {
-      throw new Exception("Eroare la actualizarea coșului: " . mysqli_error($link));
-    }
-
-    // Verifică dacă s-a actualizat cel puțin un rând
-    if (mysqli_affected_rows($link) == 0) {
-      throw new Exception("Nu s-a putut actualiza coșul. Verifică dacă produsul există.");
-    }
-
-    // COMMIT tranzacția
-    mysqli_commit($link);
-
-    // Redirecționează cu succes
-    header("location: cont.php?success=1");
-    exit;
-  } catch (Exception $e) {
-    // ROLLBACK în caz de eroare
-    mysqli_rollback($link);
-
-    // Redirecționează cu mesaj de eroare
-    header("location: cont.php?error=" . urlencode($e->getMessage()));
-    exit;
-  }
-} else {
-  // Dacă nu are adresă de facturare, redirecționează
-  if (mysqli_num_rows($qry_select) == 0) {
-    header("location: billing-alternative.php");
-  } else {
-    header("location: cont.php?error=" . urlencode("ID invalid sau lipsește parametrul."));
-  }
-  exit;
+if ($id <= 0) {
+    header("Location: cart.php?error=" . urlencode("ID produs nevalid."));
+    exit();
 }
 
-//Închide conexiunea
-mysqli_close($link);
+try {
+    // 1. Preluare billing_id dacă există (dacă nu există, setăm NULL)
+    $stmt_billing = $pdo->prepare("SELECT billing_id FROM billing_details WHERE member_id = :member_id LIMIT 1");
+    $stmt_billing->execute(['member_id' => $member_id]);
+    $billing_row = $stmt_billing->fetch(PDO::FETCH_ASSOC);
+    $billing_id = $billing_row ? $billing_row['billing_id'] : null;
+
+    // 2. Setare fus orar
+    $flag_1 = 1;
+    $stmt_tz = $pdo->prepare("SELECT timezone_reference FROM timezones WHERE flag = :flag LIMIT 1");
+    $stmt_tz->execute(['flag' => $flag_1]);
+    $row_tz = $stmt_tz->fetch(PDO::FETCH_ASSOC);
+
+    if ($row_tz) {
+        date_default_timezone_set($row_tz['timezone_reference']);
+    }
+
+    $time_stamp = date("H:i:s");
+    $delivery_date = date("Y-m-d H:i:s"); // Formatat complet cu dată și oră
+
+    // 3. Începe tranzacția SQL
+    $pdo->beginTransaction();
+
+    // Verificăm dacă produsul există în coș și are flag = 0
+    $stmt_check = $pdo->prepare("SELECT cart_id FROM cart_details WHERE cart_id = :id AND member_id = :member_id AND flag = 0");
+    $stmt_check->execute([
+        'id' => $id,
+        'member_id' => $member_id
+    ]);
+
+    if ($stmt_check->rowCount() === 0) {
+        throw new Exception("Produsul nu există în coș sau a fost deja comandat.");
+    }
+
+    // 4. Inserare în orders_details (flag = 1 specifică o comandă activată)
+    $qry_create = "INSERT INTO orders_details (member_id, billing_id, cart_id, delivery_date, flag, time_stamp, StaffID)
+                   VALUES (:member_id, :billing_id, :id, :delivery_date, 1, :time_stamp, NULL)";
+    $stmt_insert = $pdo->prepare($qry_create);
+    $stmt_insert->execute([
+        'member_id' => $member_id,
+        'billing_id' => $billing_id,
+        'id' => $id,
+        'delivery_date' => $delivery_date,
+        'time_stamp' => $time_stamp
+    ]);
+
+    // 5. Actualizare status în cart_details (flag = 1 scoate produsul din coș și îl marchează ca comandat)
+    $qry_update = "UPDATE cart_details SET flag = 1 WHERE cart_id = :id AND member_id = :member_id";
+    $stmt_update = $pdo->prepare($qry_update);
+    $stmt_update->execute([
+        'id' => $id,
+        'member_id' => $member_id
+    ]);
+
+    // Commit tranzacție
+    $pdo->commit();
+
+    // Redirecționare în contul clientului
+    header("Location: cont.php?success=1");
+    exit();
+
+} catch (Exception $e) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    header("Location: cart.php?error=" . urlencode($e->getMessage()));
+    exit();
+}

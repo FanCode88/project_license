@@ -64,11 +64,16 @@ class QRrsItem
     $rs = null;
 
     // Check parameter ranges
-    if ($symsize < 0 || $symsize > 8)                     return $rs;
-    if ($fcr < 0 || $fcr >= (1 << $symsize))                return $rs;
-    if ($prim <= 0 || $prim >= (1 << $symsize))             return $rs;
-    if ($nroots < 0 || $nroots >= (1 << $symsize))          return $rs; // Can't have more roots than symbol values!
-    if ($pad < 0 || $pad >= ((1 << $symsize) - 1 - $nroots)) return $rs; // Too much padding
+    if ($symsize < 0 || $symsize > 8)
+      return $rs;
+    if ($fcr < 0 || $fcr >= (1 << $symsize))
+      return $rs;
+    if ($prim <= 0 || $prim >= (1 << $symsize))
+      return $rs;
+    if ($nroots < 0 || $nroots >= (1 << $symsize))
+      return $rs; // Can't have more roots than symbol values!
+    if ($pad < 0 || $pad >= ((1 << $symsize) - 1 - $nroots))
+      return $rs; // Too much padding
 
     $rs = new QRrsItem();
     $rs->mm = $symsize;
@@ -112,9 +117,10 @@ class QRrsItem
     $rs->gfpoly = $gfpoly;
 
     /* Find prim-th root of 1, used in decoding */
-    for ($iprim = 1; ($iprim % $prim) != 0; $iprim += $rs->nn); // intentional empty-body loop!
+    for ($iprim = 1; ($iprim % $prim) != 0; $iprim += $rs->nn)
+      ; // intentional empty-body loop!
 
-    $rs->iprim = (int)($iprim / $prim);
+    $rs->iprim = (int) ($iprim / $prim);
     $rs->genpoly[0] = 1;
 
     for ($i = 0, $root = $fcr * $prim; $i < $nroots; $i++, $root += $prim) {
@@ -142,17 +148,17 @@ class QRrsItem
   //----------------------------------------------------------------------
   public function encode_rs_char($data, &$parity)
   {
-    $MM       = &$this->mm;
-    $NN       = &$this->nn;
+    $MM = &$this->mm;
+    $NN = &$this->nn;
     $ALPHA_TO = &$this->alpha_to;
     $INDEX_OF = &$this->index_of;
-    $GENPOLY  = &$this->genpoly;
-    $NROOTS   = &$this->nroots;
-    $FCR      = &$this->fcr;
-    $PRIM     = &$this->prim;
-    $IPRIM    = &$this->iprim;
-    $PAD      = &$this->pad;
-    $A0       = &$NN;
+    $GENPOLY = &$this->genpoly;
+    $NROOTS = &$this->nroots;
+    $FCR = &$this->fcr;
+    $PRIM = &$this->prim;
+    $IPRIM = &$this->iprim;
+    $PAD = &$this->pad;
+    $A0 = &$NN;
 
     $parity = array_fill(0, $NROOTS, 0);
 
@@ -193,12 +199,18 @@ class QRrs
   public static function init_rs($symsize, $gfpoly, $fcr, $prim, $nroots, $pad)
   {
     foreach (self::$items as $rs) {
-      if ($rs->pad != $pad)       continue;
-      if ($rs->nroots != $nroots) continue;
-      if ($rs->mm != $symsize)    continue;
-      if ($rs->gfpoly != $gfpoly) continue;
-      if ($rs->fcr != $fcr)       continue;
-      if ($rs->prim != $prim)     continue;
+      if ($rs->pad != $pad)
+        continue;
+      if ($rs->nroots != $nroots)
+        continue;
+      if ($rs->mm != $symsize)
+        continue;
+      if ($rs->gfpoly != $gfpoly)
+        continue;
+      if ($rs->fcr != $fcr)
+        continue;
+      if ($rs->prim != $prim)
+        continue;
 
       return $rs;
     }

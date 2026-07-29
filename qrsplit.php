@@ -40,8 +40,8 @@ class QRsplit
   //----------------------------------------------------------------------
   public function __construct($dataStr, $input, $modeHint)
   {
-    $this->dataStr  = $dataStr;
-    $this->input    = $input;
+    $this->dataStr = $dataStr;
+    $this->input = $input;
     $this->modeHint = $modeHint;
   }
 
@@ -129,7 +129,7 @@ class QRsplit
   //----------------------------------------------------------------------
   public function eatAn()
   {
-    $la = QRspec::lengthIndicator(QR_MODE_AN,  $this->input->getVersion());
+    $la = QRspec::lengthIndicator(QR_MODE_AN, $this->input->getVersion());
     $ln = QRspec::lengthIndicator(QR_MODE_NUM, $this->input->getVersion());
 
     $p = 0;
@@ -263,15 +263,18 @@ class QRsplit
         case QR_MODE_KANJI:
           if ($hint == QR_MODE_KANJI)
             $length = $this->eatKanji();
-          else    $length = $this->eat8();
+          else
+            $length = $this->eat8();
           break;
         default:
           $length = $this->eat8();
           break;
       }
 
-      if ($length == 0) return 0;
-      if ($length < 0)  return -1;
+      if ($length == 0)
+        return 0;
+      if ($length < 0)
+        return -1;
 
       $this->dataStr = substr($this->dataStr, $length);
     }

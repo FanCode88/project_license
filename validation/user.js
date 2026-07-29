@@ -1,421 +1,195 @@
-function cancelReservation(resId, btnElement) {
-  if (!confirm("Ești sigur că vrei să anulezi această rezervare?")) return;
+// === CĂUTĂRI ȘI ACȚIUNI AJAX ===
 
-  // Trimite cererea către aceeași pagină pentru a declanșa logica PHP de ștergere
-  fetch("member-index.php?action=delete_res&id=" + resId)
-    .then((response) => response.text())
-    .then((data) => {
-      if (data.trim() === "success") {
-        // Dacă ștergerea a reușit în DB, eliminăm vizual rândul din tabel
-        btnElement.closest("tr").remove();
-      } else {
-        alert("Eroare la ștergerea rezervării.");
-      }
-    });
-}
+// Ștergere rezervare
+async function cancelReservation(resId, btnElement) {
+  if (!confirm('Ești sigur că vrei să anulezi această rezervare?')) return;
 
-//function to handle login-form validation
-function loginValidate(loginForm) {
-  var validationVerified = true;
-  var errorMessage = "";
+  try {
+    const response = await fetch(`member-index.php?action=delete_res&id=${resId}`);
+    const data = await response.text();
 
-  if (loginForm.login.value == "") {
-    errorMessage += "Email not filled!\n";
-    validationVerified = false;
-  }
-  if (loginForm.password.value == "") {
-    errorMessage += "Password not filled!\n";
-    validationVerified = false;
-  }
-  if (!isValidEmail(loginForm.login.value)) {
-    errorMessage += "Invalid email address provided!\n";
-    validationVerified = false;
-  }
-  if (!validationVerified) {
-    alert(errorMessage);
-  }
-  return validationVerified;
-}
-
-//function to handle register-form validation
-function registerValidate(registerForm) {
-  var validationVerified = true;
-  var errorMessage = "";
-
-  if (registerForm.fname.value == "") {
-    errorMessage += "Firstname not filled!\n";
-    validationVerified = false;
-  }
-  if (registerForm.lname.value == "") {
-    errorMessage += "Lastname not filled!\n";
-    validationVerified = false;
-  }
-  if (registerForm.login.value == "") {
-    errorMessage += "Email not filled!\n";
-    validationVerified = false;
-  }
-  if (registerForm.password.value == "") {
-    errorMessage += "Password not provided!\n";
-    validationVerified = false;
-  }
-  if (registerForm.cpassword.value == "") {
-    errorMessage += "Confirm password not filled!\n";
-    validationVerified = false;
-  }
-  if (registerForm.cpassword.value != registerForm.password.value) {
-    errorMessage += "Password and Confirm Password do not match!\n";
-    validationVerified = false;
-  }
-  if (!isValidEmail(registerForm.login.value)) {
-    errorMessage += "Invalid email address provided!\n";
-    validationVerified = false;
-  }
-  if (registerForm.question.selectedIndex == 0) {
-    errorMessage += "Question not selected!\n";
-    validationVerified = false;
-  }
-  if (registerForm.answer.value == "") {
-    errorMessage += "Answer not filled!\n";
-    validationVerified = false;
-  }
-  if (!validationVerified) {
-    alert(errorMessage);
-  }
-  return validationVerified;
-}
-
-//validate email function
-function isValidEmail(val) {
-  var re = /^[\w\+\'\.-]+@[\w\'\.-]+\.[a-zA-Z]{2,}$/;
-  if (!re.test(val)) {
-    return false;
-  }
-  return true;
-}
-
-//validate special PIN
-function isValidSpecialPIN(val) {
-  var re = /^[0-9][0-9][A-Z][A-Z][A-Z][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$/;
-  if (!re.test(val)) {
-    return false;
-  }
-  return true;
-}
-
-//validate special PIN length
-function isValidLength(val) {
-  var length = 12;
-  if (!re.test(val)) {
-    return false;
-  }
-  return true;
-}
-
-//function to handle passwordResetForm validation
-function passwordResetValidate(resetForm) {
-  var validationVerified = true;
-  var errorMessage = "";
-
-  if (resetForm.email.value == "") {
-    errorMessage += "Please enter your account email! We need your email in order to reset your password.\n";
-    validationVerified = false;
-  }
-  if (!isValidEmail(resetForm.email.value)) {
-    errorMessage += "Invalid email address provided!\n";
-    validationVerified = false;
-  }
-  if (!validationVerified) {
-    alert(errorMessage);
-  }
-  return validationVerified;
-}
-
-//function to handle passwordResetForm validation(2)
-function passwordResetValidate_2(resetForm) {
-  var validationVerified = true;
-  var errorMessage = "";
-
-  if (resetForm.answer.value == "") {
-    errorMessage += "Please enter your security answer to your provided security question.\n";
-    validationVerified = false;
-  }
-  if (resetForm.new_password.value == "") {
-    errorMessage += "New Password not set!\n";
-    validationVerified = false;
-  }
-  if (resetForm.confirm_new_password.value == "") {
-    errorMessage += "Confirm New Password not set!\n";
-    validationVerified = false;
-  }
-  if (resetForm.new_password.value != resetForm.confirm_new_password.value) {
-    errorMessage += "New Password and Confirm New Password do not match!\n";
-    validationVerified = false;
-  }
-  if (!validationVerified) {
-    alert(errorMessage);
-  }
-  return validationVerified;
-}
-
-// onchange of qty field entry totals the price
-function getProductTotal(field) {
-  clearErrorInfo();
-  var form = field.form;
-  if (field.value == "") field.value = 0;
-  if (!isPosInt(field.value)) {
-    var msg = "Please enter a positive integer for quantity.";
-    addValidationMessage(msg);
-    addValidationField(field);
-    displayErrorInfo(form);
-    return;
-  } else {
-    var product = field.name.slice(0, field.name.lastIndexOf("_"));
-    var price = form.elements[product + "_price"].value;
-    var amt = field.value * price;
-    form.elements[product + "_tot"].value = formatDecimal(amt);
-    doTotals(form);
-  }
-}
-
-function doTotals(form) {
-  var total = 0;
-  for (var i = 0; PRODUCT_ABBRS[i]; i++) {
-    var cur_field = form.elements[PRODUCT_ABBRS[i] + "_qty"];
-    if (!isPosInt(cur_field.value)) {
-      var msg = "Please enter a positive integer for quantity.";
-      addValidationMessage(msg);
-      addValidationField(cur_field);
-      displayErrorInfo(form);
-      return;
+    if (data.trim() === 'success') {
+      btnElement.closest('tr')?.remove();
+    } else {
+      alert('Eroare la ștergerea rezervării.');
     }
-    total += parseFloat(cur_field.value) * parseFloat(form.elements[PRODUCT_ABBRS[i] + "_price"].value);
+  } catch (error) {
+    console.error('Fetch error:', error);
+    alert('A apărut o eroare de rețea.');
   }
-  form.elements["total"].value = formatDecimal(total);
 }
 
-//validate orderform
-function finalCheck(orderForm) {
-  var validationVerified = true;
-  var errorMessage = "";
-
-  if (orderForm.quantity.value == "") {
-    errorMessage += "Please provide a quantity.\n";
-    validationVerified = false;
+// Trimitere cantitate (înlocuit XMLHttpRequest vechi cu fetch)
+async function getQuantity(quantityId) {
+  try {
+    await fetch(`update-quantity.php?quantity_id=${quantityId}`);
+  } catch (error) {
+    console.error('Eroare la actualizarea cantității:', error);
   }
-  if (orderForm.quantity.value == 0) {
-    errorMessage += "Please provide a quantity rather than 0.\n";
-    validationVerified = false;
-  }
-  if (orderForm.total.value == "") {
-    errorMessage += "Total has not been calculated! Please provide first the quantity.\n";
-    validationVerified = false;
-  }
-  if (!validationVerified) {
-    alert(errorMessage);
-  }
-  return validationVerified;
 }
 
-//validate updateForm
-function updateValidate(updateForm) {
-  var validationVerified = true;
-  var errorMessage = "";
+// === HELPERE DE VALIDARE ===
 
-  if (updateForm.opassword.value == "") {
-    errorMessage += "Please provide your old password.\n";
-    validationVerified = false;
+// Validare Email (Regex optimizat)
+const isValidEmail = (val) => /^[\w+.-]+@[\w.-]+\.[a-zA-Z]{2,}$/.test(val);
+
+// Validare PIN Special (ex: 12ABC1234567)
+const isValidSpecialPIN = (val) => /^[0-9]{2}[A-Z]{3}[0-9]{7}$/.test(val);
+
+// Validare lungime
+const isValidLength = (val, expectedLength = 12) => val?.length === expectedLength;
+
+// Helper generic pentru manipularea erorilor
+function validateForm(errors) {
+  if (errors.length > 0) {
+    alert(errors.join('\n'));
+    return false;
   }
-  if (updateForm.npassword.value == "") {
-    errorMessage += "Please provide a new password.\n";
-    validationVerified = false;
-  }
-  if (updateForm.cpassword.value == "") {
-    errorMessage += "Please confirm your new password.\n";
-    validationVerified = false;
-  }
-  if (updateForm.cpassword.value != updateForm.npassword.value) {
-    errorMessage += "Confirm Password and New Password do not match!\n";
-    validationVerified = false;
-  }
-  if (!validationVerified) {
-    alert(errorMessage);
-  }
-  return validationVerified;
+  return true;
 }
 
-//validate billingForm
-function billingValidate(billingForm) {
-  var validationVerified = true;
-  var errorMessage = "";
+// === VALIDĂRI DE FORMULARE ===
 
-  if (billingForm.sAddress.value == "") {
-    errorMessage += "Please provide a street address.\n";
-    validationVerified = false;
-  }
-  if (billingForm.box.value == "") {
-    errorMessage += "Please provide your postal box number.\n";
-    validationVerified = false;
-  }
-  if (billingForm.city.value == "") {
-    errorMessage += "Please provide your city.\n";
-    validationVerified = false;
-  }
-  if (billingForm.mNumber.value == "") {
-    errorMessage += "Please provide your mobile number.\n";
-    validationVerified = false;
-  }
-  if (!validationVerified) {
-    alert(errorMessage);
-  }
-  return validationVerified;
+function loginValidate(form) {
+  const errors = [];
+
+  if (!form.login.value.trim()) errors.push('Email not filled!');
+  if (!form.password.value) errors.push('Password not filled!');
+  if (form.login.value && !isValidEmail(form.login.value)) errors.push('Invalid email address provided!');
+
+  return validateForm(errors);
 }
 
-//validate table form
-function tableValidate(tableForm) {
-  var validationVerified = true;
-  var errorMessage = "";
+function registerValidate(form) {
+  const errors = [];
 
-  if (tableForm.table.selectedIndex == 0) {
-    errorMessage += "Please select a table by its name or number.\n";
-    validationVerified = false;
-  }
-  if (tableForm.date.value == "") {
-    errorMessage += "Please provide a reservation date.\n";
-    validationVerified = false;
-  }
-  if (tableForm.time.value == "") {
-    errorMessage += "Please provide a reservation time.\n";
-    validationVerified = false;
-  }
-  if (!validationVerified) {
-    alert(errorMessage);
-  }
-  return validationVerified;
+  if (!form.fname.value.trim()) errors.push('Firstname not filled!');
+  if (!form.lname.value.trim()) errors.push('Lastname not filled!');
+  if (!form.login.value.trim()) errors.push('Email not filled!');
+  if (!form.password.value) errors.push('Password not provided!');
+  if (!form.cpassword.value) errors.push('Confirm password not filled!');
+  if (form.password.value !== form.cpassword.value) errors.push('Password and Confirm Password do not match!');
+  if (form.login.value && !isValidEmail(form.login.value)) errors.push('Invalid email address provided!');
+  if (form.question.selectedIndex === 0) errors.push('Question not selected!');
+  if (!form.answer.value.trim()) errors.push('Answer not filled!');
+
+  return validateForm(errors);
 }
 
-//validate partyhall form
-function partyhallValidate(partyhallForm) {
-  var validationVerified = true;
-  var errorMessage = "";
+function passwordResetValidate(form) {
+  const errors = [];
 
-  if (partyhallForm.partyhall.selectedIndex == 0) {
-    errorMessage += "Please select a partyhall by its name or number.\n";
-    validationVerified = false;
+  if (!form.email.value.trim()) {
+    errors.push('Please enter your account email! We need your email in order to reset your password.');
+  } else if (!isValidEmail(form.email.value)) {
+    errors.push('Invalid email address provided!');
   }
-  if (partyhallForm.date.value == "") {
-    errorMessage += "Please provide a reservation date.\n";
-    validationVerified = false;
-  }
-  if (partyhallForm.time.value == "") {
-    errorMessage += "Please provide a reservation time.\n";
-    validationVerified = false;
-  }
-  if (!validationVerified) {
-    alert(errorMessage);
-  }
-  return validationVerified;
+
+  return validateForm(errors);
 }
 
-//validate categories form
-function categoriesValidate(categoriesForm) {
-  var validationVerified = true;
-  var errorMessage = "";
+function passwordResetValidate_2(form) {
+  const errors = [];
 
-  if (categoriesForm.category.selectedIndex == 0) {
-    errorMessage += "Please select a category first!\n";
-    validationVerified = false;
-  }
-  if (!validationVerified) {
-    alert(errorMessage);
-  }
-  return validationVerified;
+  if (!form.answer.value.trim()) errors.push('Please enter your security answer to your provided security question.');
+  if (!form.new_password.value) errors.push('New Password not set!');
+  if (!form.confirm_new_password.value) errors.push('Confirm New Password not set!');
+  if (form.new_password.value !== form.confirm_new_password.value) errors.push('New Password and Confirm New Password do not match!');
+
+  return validateForm(errors);
 }
 
-//validate quantity form
-function updateQuantity(quantityForm) {
-  var validationVerified = true;
-  var errorMessage = "";
+function finalCheck(form) {
+  const errors = [];
+  const qty = parseInt(form.quantity.value, 10);
 
-  if (quantityForm.item.selectedIndex == 0) {
-    errorMessage += "Please select an item id first!\n";
-    validationVerified = false;
-  }
-  if (quantityForm.quantity.selectedIndex == 0) {
-    errorMessage += "Please select a quantity first!\n";
-    validationVerified = false;
-  }
-  if (!validationVerified) {
-    alert(errorMessage);
-  }
-  return validationVerified;
+  if (!form.quantity.value || isNaN(qty)) errors.push('Please provide a quantity.');
+  else if (qty === 0) errors.push('Please provide a quantity rather than 0.');
+
+  if (!form.total.value) errors.push('Total has not been calculated! Please provide first the quantity.');
+
+  return validateForm(errors);
 }
 
-//validate rating form
-function ratingValidate(ratingForm) {
-  var validationVerified = true;
-  var errorMessage = "";
+function updateValidate(form) {
+  const errors = [];
 
-  if (ratingForm.food.selectedIndex == 0) {
-    errorMessage += "Please select the food. This information is necessary in order to serve you better.\n";
-    validationVerified = false;
-  }
-  if (ratingForm.scale.selectedIndex == 0) {
-    errorMessage += "Please select the scale. This information is necessary in order to serve you better.\n";
-    validationVerified = false;
-  }
-  if (!validationVerified) {
-    alert(errorMessage);
-  }
-  return validationVerified;
+  if (!form.opassword.value) errors.push('Please provide your old password.');
+  if (!form.npassword.value) errors.push('Please provide a new password.');
+  if (!form.cpassword.value) errors.push('Please confirm your new password.');
+  if (form.cpassword.value !== form.npassword.value) errors.push('Confirm Password and New Password do not match!');
+
+  return validateForm(errors);
 }
 
-//reset password popup
+function billingValidate(form) {
+  const errors = [];
+
+  if (!form.sAddress.value.trim()) errors.push('Please provide a street address.');
+  if (!form.box.value.trim()) errors.push('Please provide your postal box number.');
+  if (!form.city.value.trim()) errors.push('Please provide your city.');
+  if (!form.mNumber.value.trim()) errors.push('Please provide your mobile number.');
+
+  return validateForm(errors);
+}
+
+function tableValidate(form) {
+  const errors = [];
+
+  if (form.table.selectedIndex === 0) errors.push('Please select a table by its name or number.');
+  if (!form.date.value) errors.push('Please provide a reservation date.');
+  if (!form.time.value) errors.push('Please provide a reservation time.');
+
+  return validateForm(errors);
+}
+
+function partyhallValidate(form) {
+  const errors = [];
+
+  if (form.partyhall.selectedIndex === 0) errors.push('Please select a partyhall by its name or number.');
+  if (!form.date.value) errors.push('Please provide a reservation date.');
+  if (!form.time.value) errors.push('Please provide a reservation time.');
+
+  return validateForm(errors);
+}
+
+function categoriesValidate(form) {
+  const errors = [];
+  if (form.category.selectedIndex === 0) errors.push('Please select a category first!');
+  return validateForm(errors);
+}
+
+function updateQuantity(form) {
+  const errors = [];
+  if (form.item.selectedIndex === 0) errors.push('Please select an item id first!');
+  if (form.quantity.selectedIndex === 0) errors.push('Please select a quantity first!');
+  return validateForm(errors);
+}
+
+function ratingValidate(form) {
+  const errors = [];
+  if (form.food.selectedIndex === 0) errors.push('Please select the food. This information is necessary in order to serve you better.');
+  if (form.scale.selectedIndex === 0) errors.push('Please select the scale. This information is necessary in order to serve you better.');
+  return validateForm(errors);
+}
+
+// === UTILITARE UI ===
+
 function resetPassword() {
   window.open(
-    "password-reset.php",
-    "resetPassword",
-    "toolbar=no,location=no,directories=no,status=no,menubar=no,resizable=no,copyhistory=no,scrollbars=yes,width=480,height=320",
+    'password-reset.php',
+    'resetPassword',
+    'toolbar=no,location=no,directories=no,status=no,menubar=no,resizable=no,copyhistory=no,scrollbars=yes,width=480,height=320'
   );
 }
 
-//validates quantity and redirects quantity to update-quantity.php
-function getQuantity(int) {
-  if (window.XMLHttpRequest) {
-    // code for IE7+, Firefox, Chrome, Opera, Safari
-    xmlhttp = new XMLHttpRequest();
-  } else {
-    // code for IE6, IE5
-    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-  }
-
-  xmlhttp.open("GET", "update-quantity.php?quantity_id=" + int, true);
-  xmlhttp.send();
-}
-
-//live clock function
+// Ceas în timp real
 function updateClock() {
-  var currentTime = new Date();
+  const now = new Date();
+  const timeString = now.toLocaleTimeString('en-US', { hour12: true });
 
-  var currentHours = currentTime.getHours();
-  var currentMinutes = currentTime.getMinutes();
-  var currentSeconds = currentTime.getSeconds();
-
-  // Pad the minutes and seconds with leading zeros, if required
-  currentMinutes = (currentMinutes < 10 ? "0" : "") + currentMinutes;
-  currentSeconds = (currentSeconds < 10 ? "0" : "") + currentSeconds;
-
-  // Choose either "AM" or "PM" as appropriate
-  var timeOfDay = currentHours < 12 ? "AM" : "PM";
-
-  // Convert the hours component to 12-hour format if needed
-  currentHours = currentHours > 12 ? currentHours - 12 : currentHours;
-
-  // Convert an hours component of "0" to "12"
-  currentHours = currentHours == 0 ? 12 : currentHours;
-
-  // Compose the string for display
-  var currentTimeString = currentHours + ":" + currentMinutes + ":" + currentSeconds + " " + timeOfDay;
-
-  // Update the time display
-  document.getElementById("clock").innerHTML = currentTimeString;
+  const clockEl = document.getElementById('clock');
+  if (clockEl) {
+    clockEl.textContent = timeString;
+  }
 }

@@ -14,7 +14,9 @@
   <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,400i,600,600i,700,700i|Satisfy|Comic+Neue:300,300i,400,400i,700,700i" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,400i,600,600i,700,700i|Satisfy|Comic+Neue:300,300i,400,400i,700,700i"
+    rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="assets/vendor/animate.css/animate.min.css" rel="stylesheet">
@@ -107,7 +109,8 @@
   <footer id="footer">
     <div class="container">
       <h3>Deluxe Restaurant</h3>
-      <p> Best premium multicuisine Restaurant in Craiova, Romania. We strive to serve you the tastiest multicuisine food for your taste. We bring to the table flavours from around the world.</p>
+      <p> Best premium multicuisine Restaurant in Craiova, Romania. We strive to serve you the tastiest multicuisine
+        food for your taste. We bring to the table flavours from around the world.</p>
 
       <div class="copyright">
         &copy; Copyright <strong><span>2026 Saceanu Ionut </span></strong>. All Rights Reserved
@@ -122,7 +125,8 @@
     </div>
   </footer><!-- End Footer -->
 
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
 
   <!-- Vendor JS Files -->
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

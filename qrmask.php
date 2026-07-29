@@ -45,7 +45,7 @@ class QRmask
   public function writeFormatInformation($width, &$frame, $mask, $level)
   {
     $blacks = 0;
-    $format =  QRspec::getFormatInfo($mask, $level);
+    $format = QRspec::getFormatInfo($mask, $level);
 
     for ($i = 0; $i < 8; $i++) {
       if ($format & 1) {
@@ -104,7 +104,7 @@ class QRmask
   }
   public function mask4($x, $y)
   {
-    return (((int)($y / 2)) + ((int)($x / 3))) & 1;
+    return (((int) ($y / 2)) + ((int) ($x / 3))) & 1;
   }
   public function mask5($x, $y)
   {
@@ -190,9 +190,9 @@ class QRmask
     for ($y = 0; $y < $width; $y++) {
       for ($x = 0; $x < $width; $x++) {
         if ($bitMask[$y][$x] == 1) {
-          $d[$y][$x] = chr(ord($s[$y][$x]) ^ (int)$bitMask[$y][$x]);
+          $d[$y][$x] = chr(ord($s[$y][$x]) ^ (int) $bitMask[$y][$x]);
         }
-        $b += (int)(ord($d[$y][$x]) & 1);
+        $b += (int) (ord($d[$y][$x]) & 1);
       }
     }
 
@@ -221,8 +221,9 @@ class QRmask
       }
       if ($i & 1) {
         if (($i >= 3) && ($i < ($length - 2)) && ($this->runLength[$i] % 3 == 0)) {
-          $fact = (int)($this->runLength[$i] / 3);
-          if (($this->runLength[$i - 2] == $fact) &&
+          $fact = (int) ($this->runLength[$i] / 3);
+          if (
+            ($this->runLength[$i - 2] == $fact) &&
             ($this->runLength[$i - 1] == $fact) &&
             ($this->runLength[$i + 1] == $fact) &&
             ($this->runLength[$i + 2] == $fact)
@@ -318,7 +319,7 @@ class QRmask
     if (QR_FIND_FROM_RANDOM !== false) {
 
       $howManuOut = 8 - (QR_FIND_FROM_RANDOM % 9);
-      for ($i = 0; $i <  $howManuOut; $i++) {
+      for ($i = 0; $i < $howManuOut; $i++) {
         $remPos = rand(0, count($checked_masks) - 1);
         unset($checked_masks[$remPos]);
         $checked_masks = array_values($checked_masks);
@@ -332,10 +333,10 @@ class QRmask
 
       $demerit = 0;
       $blacks = 0;
-      $blacks  = $this->makeMaskNo($i, $width, $frame, $mask);
+      $blacks = $this->makeMaskNo($i, $width, $frame, $mask);
       $blacks += $this->writeFormatInformation($width, $mask, $i, $level);
-      $blacks  = (int)(100 * $blacks / ($width * $width));
-      $demerit = (int)((int)(abs($blacks - 50) / 5) * N4);
+      $blacks = (int) (100 * $blacks / ($width * $width));
+      $demerit = (int) ((int) (abs($blacks - 50) / 5) * N4);
       $demerit += $this->evaluateSymbol($width, $mask);
 
       if ($demerit < $minDemerit) {

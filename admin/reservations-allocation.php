@@ -1,46 +1,54 @@
 <?php
-//checking connection and connecting to a database
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+require_once('auth.php');
+
+// checking connection and connecting to a database
 require_once('connection/config.php');
-//Connect to mysql server
-$link = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
+
+$link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
 if (!$link) {
-  die('Failed to connect to server: ' . mysql_error());
+  die('Failed to connect to server: ' . mysqli_connect_error());
 }
 
-//Select database
-$db = mysql_select_db(DB_DATABASE);
-if (!$db) {
-  die("Unable to select database");
+// Set charset to utf8mb4 for proper character encoding
+mysqli_set_charset($link, "utf8mb4");
+
+// Sanitize and validate POST values using prepared statements / modern approach
+$ReservationID = $_POST['reservationid'] ?? '';
+$StaffID = $_POST['staffid'] ?? '';
+
+// Basic validation to ensure fields are not empty or set to default "select"
+if ($ReservationID === 'select' || $StaffID === 'select' || empty($ReservationID) || empty($StaffID)) {
+  die("Error: Invalid reservation or staff selection.");
 }
 
-//Function to sanitize values received from the form. Prevents SQL injection
-function clean($str)
-{
-  $str = @trim($str);
-  if (get_magic_quotes_gpc()) {
-    $str = stripslashes($str);
-  }
-  return mysql_real_escape_string($str);
-}
-
-//Sanitize the POST values
-$ReservationID = clean($_POST['reservationid']);
-$StaffID = clean($_POST['staffid']);
-
-//define a default value for flag
+// Define a default value for flag
 $flag_1 = 1;
 
-// update the entry
-$result = mysql_query("UPDATE reservations_details SET StaffID='$StaffID', flag='$flag_1' WHERE ReservationID='$ReservationID'")
-  or die("The reservation or staff does not exist ... \n" . mysql_error());
+// Update the entry using prepared statements to prevent SQL injection
+$query = "UPDATE reservations_details SET StaffID = ?, flag = ? WHERE ReservationID = ?";
+$stmt = mysqli_prepare($link, $query);
 
-//check if query executed
-if ($result) {
-  // redirect back to the allocation page
-  header("Location: allocation.php");
-  exit();
-} else
-// Gives an error
-{
-  die("reservation allocation failed ..." . mysql_error());
+if ($stmt) {
+  mysqli_stmt_bind_param($stmt, "iii", $StaffID, $flag_1, $ReservationID);
+  $result = mysqli_stmt_execute($stmt);
+
+  if ($result) {
+    mysqli_stmt_close($stmt);
+    mysqli_close($link);
+    // Redirect back to the allocation page
+    header("Location: allocation.php");
+    exit();
+  } else {
+    $error = mysqli_stmt_error($stmt);
+    mysqli_stmt_close($stmt);
+    mysqli_close($link);
+    die("Reservation allocation failed ... \n" . $error);
+  }
+} else {
+  $error = mysqli_error($link);
+  mysqli_close($link);
+  die("Query preparation failed ... \n" . $error);
 }
+?>

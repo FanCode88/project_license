@@ -45,7 +45,7 @@ define('QR_ECLEVEL_H', 3);
 // Supported output formats
 
 define('QR_FORMAT_TEXT', 0);
-define('QR_FORMAT_PNG',  1);
+define('QR_FORMAT_PNG', 1);
 
 class qrstr
 {

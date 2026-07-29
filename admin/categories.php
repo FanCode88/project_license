@@ -10,17 +10,21 @@ if (!$link) {
   die('Failed to connect to server: ' . mysqli_connect_error());
 }
 
+// Setează setul de caractere utf8mb4
+mysqli_set_charset($link, "utf8mb4");
+
 // Preluare categorii
 $query = "SELECT * FROM categories";
 $result = mysqli_query($link, $query) or die("There are no records to display ... \n" . mysqli_error($link));
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Categories Management</title>
-  <link href="stylesheets/admin_styles.css" rel="stylesheet" type="text/css" />
+  <link href="stylesheets/categories.css" rel="stylesheet" type="text/css" />
   <script language="JavaScript" src="validation/admin.js"></script>
 </head>
 
@@ -49,7 +53,8 @@ $result = mysqli_query($link, $query) or die("There are no records to display ..
       <!-- Card pentru adăugare categorie -->
       <div class="allocation-card" style="max-width: 400px; margin: 0 auto 20px auto;">
         <h3>Add New Category</h3>
-        <form id="categoryForm" name="categoryForm" method="post" action="categories-exec.php" onsubmit="return categoriesValidate(this)">
+        <form id="categoryForm" name="categoryForm" method="post" action="categories-exec.php"
+          onsubmit="return categoriesValidate(this)">
           <div class="form-group">
             <label for="name">Category Name</label>
             <input type="text" name="name" id="name" class="textfield" style="width: 100%; box-sizing: border-box;" />
@@ -63,20 +68,18 @@ $result = mysqli_query($link, $query) or die("There are no records to display ..
       <hr />
 
       <!-- Tabel categorii existente -->
-      <table class="modern-table" style="max-width: 500px; margin: 0 auto;">
+      <table class="modern-table" style="max-width: 400px; margin: 0 auto;">
         <caption>
           <h3>Available Categories</h3>
         </caption>
-        <tr>
-          <th>Category Name</th>
-          <th>Action(s)</th>
-        </tr>
+        <th>Category Name</th>
+        <th>Action(s)</th>
 
         <?php
         while ($row = mysqli_fetch_assoc($result)) {
           echo "<tr>";
           echo "<td>" . htmlspecialchars($row['category_name']) . "</td>";
-          echo '<td><a href="delete-category.php?id=' . $row['category_id'] . '" class="btn-remove">Remove</a></td>';
+          echo '<td><a href="delete-category.php?id=' . htmlspecialchars($row['category_id']) . '" class="btn-remove">Remove</a></td>';
           echo "</tr>";
         }
         mysqli_free_result($result);

@@ -1,85 +1,73 @@
 <?php
-$link = mysql_connect('localhost', 'root', '') or die(mysql_error());
-mysql_select_db('polling') or die(mysql_error());
-
+// Pornim sesiunea și forțăm afișarea erorilor pentru depanare
 session_start();
-//If your session isn't valid, it returns you to the login screen for protection
-if (empty($_SESSION['member_id'])) {
-  header("location:access-denied.php");
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Conectare la baza de date folosind MySQLi modern și setări corespunzătoare
+require_once('connection/config.php');
+
+$link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, 'polling');
+if (!$link) {
+    die('Failed to connect to server: ' . mysqli_connect_error());
 }
-?>
-<?php
-// retrieving positions sql query
-$positions = mysql_query("SELECT * FROM tbPositions")
-  or die("There are no records to display ... \n" . mysql_error());
-?>
-<?php
-// retrieval sql query
-// check if Submit is set in POST
-if (isset($_POST['Submit'])) {
-  // get position value
-  $position = addslashes($_POST['position']); //prevents types of SQL injection
 
-  // retrieve based on position
-  $result = mysql_query("SELECT * FROM tbCandidates WHERE candidate_position='$position'")
-    or die(" There are no records at the moment ... \n");
+// Setează setul de caractere UTF-8
+mysqli_set_charset($link, "utf8");
 
-  // redirect back to vote
-  //header("Location: vote.php");
-} else
-  // do something
+// Dacă sesiunea nu este validă, redirecționează către ecranul de autentificare
+if (empty($_SESSION['member_id'])) {
+    mysqli_close($link);
+    header("location: access-denied.php");
+    exit();
+}
 
+// Preluarea pozițiilor folosind MySQLi
+$positions = mysqli_query($link, "SELECT * FROM tbPositions");
+if (!$positions) {
+    die("There are no records to display ... \n" . mysqli_error($link));
+}
+
+// Verificarea trimiterii formularului și interogare securizată cu prepared statements
+$result = null;
+if (isset($_POST['Submit']) && isset($_POST['position'])) {
+    $position = trim($_POST['position']);
+
+    $stmt = mysqli_prepare($link, "SELECT * FROM tbCandidates WHERE candidate_position = ?");
+    mysqli_stmt_bind_param($stmt, "s", $position);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+}
 ?>
 <html>
 
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-  <title>Simple PHP Polling System:Voting Page</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>Simple PHP Polling System: Voting Page</title>
   <link href="css/user_styles.css" rel="stylesheet" type="text/css" />
-  <script language="JavaScript" src="js/user.js">
-  </script>
+  <script language="JavaScript" src="js/user.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script type="text/javascript">
-    function getVote(int) {
-      if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
+    function getVote(val) {
+      if (window.XMLHttpRequest) {
         xmlhttp = new XMLHttpRequest();
-      } else { // code for IE6, IE5
+      } else {
         xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
       }
-
-      xmlhttp.open("GET", "save.php?vote=" + int, true);
+      xmlhttp.open("GET", "save.php?vote=" + encodeURIComponent(val), true);
       xmlhttp.send();
     }
 
-    function getPosition(String) {
-      if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
+    function getPosition(str) {
+      if (window.XMLHttpRequest) {
         xmlhttp = new XMLHttpRequest();
-      } else { // code for IE6, IE5
+      } else {
         xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
       }
-
-      xmlhttp.open("GET", "vote.php?position=" + String, true);
+      xmlhttp.open("GET", "vote.php?position=" + encodeURIComponent(str), true);
       xmlhttp.send();
     }
-  </script>
-  <script type="text/javascript">
-    $(document).ready(function() {
-      var j = jQuery.noConflict();
-      j(document).ready(function() {
-        j(".refresh").everyTime(1000, function(i) {
-          j.ajax({
-            url: "admin/refresh.php",
-            cache: false,
-            success: function(html) {
-              j(".refresh").html(html);
-            }
-          })
-        })
-
-      });
-      j('.refresh').css({
-        color: "green"
-      });
-    });
   </script>
 </head>
 
@@ -89,70 +77,73 @@ if (isset($_POST['Submit'])) {
       <font color="brown" size="6">Simple PHP Polling System</font>
     </b></center><br><br>
 
-  <body>
-    <div id="page">
-      <div id="header">
-        <h1>CURRENT POLLS</h1>
-        <a href="student.php">Home</a> | <a href="vote.php">Current Polls</a> | <a href="manage-profile.php">Manage My Profile</a> | <a href="logout.php">Logout</a>
-      </div>
-      <div class="refresh">
-      </div>
-      <div id="container">
-        <table width="420" align="center">
-          <form name="fmNames" id="fmNames" method="post" action="vote.php" onsubmit="return positionValidate(this)">
-            <tr>
-              <td>Choose Position</td>
-              <td><SELECT NAME="position" id="position" onchange="getPosition(this.value)">
-                  <OPTION VALUE="select">select
-                    <?php
-                  //loop through all table rows
-                  while ($row = mysql_fetch_array($positions)) {
-                    echo "<OPTION VALUE=$row[position_name]>$row[position_name]";
-                    //mysql_free_result($positions_retrieved);
-                    //mysql_close($link);
-                  }
-                    ?>
-                </SELECT></td>
-              <td><input type="submit" name="Submit" value="See Candidates" /></td>
-            </tr>
-            <tr>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-            </tr>
-          </form>
-        </table>
-        <table width="270" align="center">
-          <form>
-            <tr>
-              <th>Candidates:</th>
-            </tr>
-            <?php
-            //loop through all table rows
-            //if (mysql_num_rows($result)>0){
-            if (isset($_POST['Submit'])) {
-              while ($row = mysql_fetch_array($result)) {
-                echo "<tr>";
-                echo "<td>" . $row['candidate_name'] . "</td>";
-                echo "<td><input type='radio' name='vote' value='$row[candidate_name]' onclick='getVote(this.value)' /></td>";
-                echo "</tr>";
-              }
-              mysql_free_result($result);
-              mysql_close($link);
-              //}
-            } else
-              // do nothing
-            ?>
-            <tr>
-              <h3>NB: Click a circle under a respective candidate to cast your vote. You can't vote more than once in a respective position. This process can not be undone so think wisely before casting your vote.</h3>
-              <td>&nbsp;</td>
-            </tr>
-          </form>
-        </table>
-      </div>
-      <div id="footer">
-        <div class="bottom_addr">&copy; 2026 Saceanu Ionut Sorin. All Rights Reserved</div>
-      </div>
+  <div id="page">
+    <div id="header">
+      <h1>CURRENT POLLS</h1>
+      <a href="student.php">Home</a> | <a href="vote.php">Current Polls</a> | <a href="manage-profile.php">Manage My Profile</a> | <a href="logout.php">Logout</a>
     </div>
-  </body>
+    <div class="refresh"></div>
+    <div id="container">
+      <table width="420" align="center">
+        <form name="fmNames" id="fmNames" method="post" action="vote.php" onsubmit="return positionValidate(this)">
+          <tr>
+            <td>Choose Position</td>
+            <td>
+              <SELECT NAME="position" id="position" onchange="getPosition(this.value)" required>
+                <OPTION VALUE="">select</OPTION>
+                <?php
+                while ($row = mysqli_fetch_assoc($positions)) {
+                    $pos_name = htmlspecialchars($row['position_name']);
+                    $selected = (isset($_POST['position']) && $_POST['position'] == $row['position_name']) ? "selected" : "";
+                    echo "<OPTION VALUE='$pos_name' $selected>$pos_name</OPTION>";
+                }
+                mysqli_free_result($positions);
+                ?>
+              </SELECT>
+            </td>
+            <td><input type="submit" name="Submit" value="See Candidates" /></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+        </form>
+      </table>
 
-</html>
+      <table width="270" align="center">
+        <form>
+          <tr>
+            <th>Candidates:</th>
+          </tr>
+          <?php
+          if (isset($_POST['Submit']) && $result) {
+              while ($row = mysqli_fetch_assoc($result)) {
+                  $candidate_name = htmlspecialchars($row['candidate_name']);
+                  echo "<tr>";
+                  echo "<td>" . $candidate_name . "</td>";
+                  echo "<td><input type='radio' name='vote' value='$candidate_name' onclick='getVote(this.value)' /></td>";
+                  echo "</tr>";
+              }
+              mysqli_free_result($result);
+              mysqli_stmt_close($stmt);
+          }
+          mysqli_close($link);
+          ?>
+          <tr>
+            <td>
+              <h3>NB: Click a circle under a respective candidate to cast your vote. You can't vote more than once in a respective position. This process can not be undone so think wisely before casting your vote.</h3>
+            </td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+        </form>
+      </table>
+    </div>
+    <div id="footer">
+      <div class="bottom_addr">&copy; 2026 Saceanu Ionut Sorin. All Rights Reserved</div>
+    </div>
+  </div>
+</body>
+
+</html>s

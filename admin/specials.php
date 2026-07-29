@@ -11,6 +11,9 @@ if (!$link) {
   die('Failed to connect to server: ' . mysqli_connect_error());
 }
 
+// Set charset to utf8mb4 for proper character encoding
+mysqli_set_charset($link, "utf8mb4");
+
 $result = mysqli_query($link, "SELECT * FROM specials")
   or die("There are no records to display ... \n" . mysqli_error($link));
 
@@ -18,13 +21,14 @@ $flag_1 = 1;
 $currencies = mysqli_query($link, "SELECT * FROM currencies WHERE flag='$flag_1'")
   or die("A problem has occured ... \n" . "Our team is working on it at the moment ... \n" . "Please check back after few hours. " . mysqli_error($link));
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Specials</title>
-  <link href="stylesheets/admin_styles.css" rel="stylesheet" type="text/css" />
+  <link href="stylesheets/specials.css" rel="stylesheet" type="text/css" />
   <script language="JavaScript" src="validation/admin.js"></script>
 </head>
 
@@ -50,11 +54,13 @@ $currencies = mysqli_query($link, "SELECT * FROM currencies WHERE flag='$flag_1'
 
     <div id="container">
 
+      <!-- Tabel pentru Adăugare Promoție Nouă -->
       <table class="modern-table">
         <caption>
           <h3>Add New Promotion</h3>
         </caption>
-        <form name="specialsForm" id="specialsForm" action="specials-exec.php" method="post" enctype="multipart/form-data" onsubmit="return specialsValidate(this)">
+        <form name="specialsForm" id="specialsForm" action="specials-exec.php" method="post"
+          enctype="multipart/form-data" onsubmit="return specialsValidate(this)">
           <tr>
             <th>Name</th>
             <th>Description</th>
@@ -66,7 +72,8 @@ $currencies = mysqli_query($link, "SELECT * FROM currencies WHERE flag='$flag_1'
           </tr>
           <tr>
             <td><input type="text" name="name" id="name" class="textfield" placeholder="e.g. Summer Offer" /></td>
-            <td><textarea name="description" id="description" class="textfield" rows="2" cols="15" placeholder="Details..."></textarea></td>
+            <td><textarea name="description" id="description" class="textfield" rows="2" cols="15"
+                placeholder="Details..."></textarea></td>
             <td><input type="text" name="price" id="price" class="textfield" placeholder="0.00" /></td>
             <td><input type="date" name="start_date" id="start_date" class="textfield" /></td>
             <td><input type="date" name="end_date" id="end_date" class="textfield" /></td>
@@ -78,6 +85,7 @@ $currencies = mysqli_query($link, "SELECT * FROM currencies WHERE flag='$flag_1'
 
       <hr />
 
+      <!-- Tabel pentru Promoții Active -->
       <table class="modern-table">
         <caption>
           <h3>Active Promotions</h3>
@@ -93,19 +101,30 @@ $currencies = mysqli_query($link, "SELECT * FROM currencies WHERE flag='$flag_1'
         </tr>
 
         <?php
-        $symbol = mysqli_fetch_assoc($currencies);
+        // Preluăm simbolul valutei în siguranță
+        $symbol_val = '';
+        if ($currencies && mysqli_num_rows($currencies) > 0) {
+          $symbol = mysqli_fetch_assoc($currencies);
+          $symbol_val = isset($symbol['currency_symbol']) ? $symbol['currency_symbol'] : '';
+        }
+
         while ($row = mysqli_fetch_array($result)) {
           echo "<tr>";
-          echo '<td><img src="../images/' . $row['special_photo'] . '" class="promo-img" width="80" height="70"></td>';
+          echo '<td><img src="../images/' . htmlspecialchars($row['special_photo']) . '" class="promo-img" width="80" height="70"></td>';
           echo '<td class="font-bold">' . htmlspecialchars($row['special_name']) . '</td>';
           echo '<td class="desc-cell">' . htmlspecialchars($row['special_description']) . '</td>';
-          echo '<td><span class="price-cell">' . $symbol['currency_symbol'] . $row['special_price'] . '</span></td>';
-          echo '<td>' . $row['special_start_date'] . '</td>';
-          echo '<td>' . $row['special_end_date'] . '</td>';
-          echo '<td><a href="delete-special.php?id=' . $row['special_id'] . '" class="btn-remove">Remove</a></td>';
+          echo '<td><span class="price-cell">' . htmlspecialchars($symbol_val) . htmlspecialchars($row['special_price']) . '</span></td>';
+          echo '<td>' . htmlspecialchars($row['special_start_date']) . '</td>';
+          echo '<td>' . htmlspecialchars($row['special_end_date']) . '</td>';
+          echo '<td><a href="delete-special.php?id=' . htmlspecialchars($row['special_id']) . '" class="btn-remove">Remove</a></td>';
           echo "</tr>";
         }
+
+        // Eliberăm rezultatele și închidem conexiunea o singură dată
         mysqli_free_result($result);
+        if ($currencies) {
+          mysqli_free_result($currencies);
+        }
         mysqli_close($link);
         ?>
       </table>

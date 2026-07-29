@@ -1,47 +1,53 @@
 <?php
 //Start session
 session_start();
+require_once('auth.php');
 
 //Include database connection details
 require_once('connection/config.php');
 
-//Connect to mysql server
-$link = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
+//Connect to mysql server using modern MySQLi
+$link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
 if (!$link) {
-  die('Failed to connect to server: ' . mysql_error());
+  die('Failed to connect to server: ' . mysqli_connect_error());
 }
 
-//Select database
-$db = mysql_select_db(DB_DATABASE);
-if (!$db) {
-  die("Unable to select database");
-}
+//Set charset to utf8mb4 for proper character encoding
+mysqli_set_charset($link, "utf8mb4");
 
 //Function to sanitize values received from the form. Prevents SQL injection
-function clean($str)
+function clean($conn, $str)
 {
-  $str = @trim($str);
-  if (get_magic_quotes_gpc()) {
-    $str = stripslashes($str);
-  }
-  return mysql_real_escape_string($str);
+  $str = trim($str);
+  return mysqli_real_escape_string($conn, $str);
 }
 
 //Sanitize the POST values
-$FirstName = clean($_POST['fName']);
-$LastName = clean($_POST['lName']);
-$StreetAddress = clean($_POST['sAddress']);
-$MobileNo = clean($_POST['mobile']);
+$FirstName = isset($_POST['fName']) ? clean($link, $_POST['fName']) : '';
+$LastName = isset($_POST['lName']) ? clean($link, $_POST['lName']) : '';
+$StreetAddress = isset($_POST['sAddress']) ? clean($link, $_POST['sAddress']) : '';
+$MobileNo = isset($_POST['mobile']) ? clean($link, $_POST['mobile']) : '';
 
+//Create INSERT query using prepared statements
+$stmt = mysqli_prepare($link, "INSERT INTO staff (firstname, lastname, Street_Address, Mobile_Tel) VALUES (?, ?, ?, ?)");
+if ($stmt) {
+  mysqli_stmt_bind_param($stmt, "ssss", $FirstName, $LastName, $StreetAddress, $MobileNo);
+  $result = mysqli_stmt_execute($stmt);
 
-//Create INSERT query
-$qry = "INSERT INTO staff(firstname,lastname,Street_Address,Mobile_Tel) VALUES('$FirstName','$LastName','$StreetAddress','$MobileNo')";
-$result = @mysql_query($qry);
-
-//Check whether the query was successful or not
-if ($result) {
-  echo "<html><script language='JavaScript'>alert('Staff information added successifully.')</script></html>";
-  exit();
+  //Check whether the query was successful or not
+  if ($result) {
+    mysqli_stmt_close($stmt);
+    mysqli_close($link);
+    echo "<html><script language='JavaScript'>alert('Staff information added successfully.')</script></html>";
+    exit();
+  } else {
+    $error = mysqli_error($link);
+    mysqli_stmt_close($stmt);
+    mysqli_close($link);
+    die("Adding staff information failed ... " . $error);
+  }
 } else {
-  die("Adding staff information failed ... " . mysql_error());
+  $error = mysqli_error($link);
+  mysqli_close($link);
+  die("Query preparation failed ... " . $error);
 }

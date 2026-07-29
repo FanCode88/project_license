@@ -5,21 +5,21 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// 2. Conectare la baza de date (suntem în folderul principal, deci calea e simplă)
+// 2. Conectare la baza de date
 require_once('connection/config.php');
 
 $link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
 if (!$link) {
-  die('Eroare la conectarea cu serverul: ' . mysqli_connect_error());
+    die('Eroare la conectarea cu serverul: ' . mysqli_connect_error());
 }
 
 // 3. Preluăm moneda activă pentru a afișa prețurile corect
+// Adăugat htmlspecialchars pe simbol pentru securitate
 $currency_query = mysqli_query($link, "SELECT * FROM currencies WHERE flag='1'");
 $symbol = mysqli_fetch_assoc($currency_query);
 $currency_symbol = isset($symbol['currency_symbol']) ? $symbol['currency_symbol'] : '$';
 
 // 4. Preluăm doar ofertele valabile (unde data curentă este între start_date și end_date)
-// Dacă vrei să le afișezi pe toate indiferent de dată, folosește doar: SELECT * FROM specials
 $curent_date = date('Y-m-d');
 $query = "SELECT * FROM specials WHERE '$curent_date' BETWEEN special_start_date AND special_end_date";
 $result = mysqli_query($link, $query);
@@ -114,26 +114,27 @@ $result = mysqli_query($link, $query);
         <?php
         $count = mysqli_num_rows($result);
         if ($count < 1) {
-          echo "<p>Momentan nu avem nicio ofertă specială activă. Revino curând!</p>";
+            echo "<p>Momentan nu avem nicio ofertă specială activă. Revino curând!</p>";
         } else {
-          // Parcurgem toate ofertele adăugate de admin
-          while ($row = mysqli_fetch_assoc($result)) {
-            // Verificăm dacă există o imagine validă, altfel punem un placeholder
-            $image_path = "images/" . $row['special_photo'];
-            if (empty($row['special_photo']) || !file_exists($image_path)) {
-              $image_path = "images/default-food.jpg"; // o imagine standard dacă lipsește poza
-            }
+            // Parcurgem toate ofertele adăugate de admin
+            while ($row = mysqli_fetch_assoc($result)) {
+                // Verificăm dacă există o imagine validă, altfel punem un placeholder
+                $image_path = "images/" . $row['special_photo'];
+                if (empty($row['special_photo']) || !file_exists($image_path)) {
+                    $image_path = "images/default-food.jpg"; // o imagine standard dacă lipsește poza
+                }
 
-            echo "<div class='special-card'>";
-            echo "<img src='" . $image_path . "' width='220' height='160' alt='" . htmlspecialchars($row['special_name']) . "'>";
-            echo "<h3>" . htmlspecialchars($row['special_name']) . "</h3>";
-            echo "<p>" . htmlspecialchars($row['special_description']) . "</p>";
-            echo "<div class='price-tag'>" . $currency_symbol . $row['special_price'] . "</div>";
-            echo "<div class='date-tag'>Valabil: " . $row['special_start_date'] . " până la " . $row['special_end_date'] . "</div>";
-            // Trimite direct în coș (opțional, dacă ai structura asta pe link-ul respectiv)
-            echo "<a class='btn-order' href='cart-exec.php?id=" . $row['special_id'] . "'>Comandă Acum</a>";
-            echo "</div>";
-          }
+                echo "<div class='special-card'>";
+                echo "<img src='" . htmlspecialchars($image_path) . "' width='220' height='160' alt='" . htmlspecialchars($row['special_name']) . "'>";
+                echo "<h3>" . htmlspecialchars($row['special_name']) . "</h3>";
+                echo "<p>" . htmlspecialchars($row['special_description']) . "</p>";
+                // Corectat lipsa funcției htmlspecialchars pentru preț și simbol
+                echo "<div class='price-tag'>" . htmlspecialchars($currency_symbol) . htmlspecialchars($row['special_price']) . "</div>";
+                echo "<div class='date-tag'>Valabil: " . htmlspecialchars($row['special_start_date']) . " până la " . htmlspecialchars($row['special_end_date']) . "</div>";
+                // Trimite direct în coș securizând ID-ul cu htmlspecialchars
+                echo "<a class='btn-order' href='cart-exec.php?id=" . htmlspecialchars($row['special_id']) . "'>Comandă Acum</a>";
+                echo "</div>";
+            }
         }
         mysqli_free_result($result);
         mysqli_close($link);

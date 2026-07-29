@@ -2,17 +2,30 @@
 require_once('auth.php');
 require_once('connection/config.php');
 
-// Conectare mysqli
+// Conectare modernă MySQLi
 $link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
+if (!$link) {
+  die('Eroare la conectarea cu serverul: ' . mysqli_connect_error());
+}
 
-$memberId = $_SESSION['SESS_MEMBER_ID'];
+// Setare charset utf8mb4
+mysqli_set_charset($link, "utf8mb4");
 
-// Preluare date folosind mysqli
-$items = mysqli_query($link, "SELECT * FROM cart_details WHERE member_id='$memberId' AND flag='0'");
-$num_items = mysqli_num_rows($items);
+$memberId = isset($_SESSION['SESS_MEMBER_ID']) ? $_SESSION['SESS_MEMBER_ID'] : null;
 
-$messages = mysqli_query($link, "SELECT * FROM messages");
-$num_messages = mysqli_num_rows($messages);
+// Preluare elemente din coș folosind interogare securizată / mysqli
+$num_items = 0;
+if ($memberId) {
+  $stmt_cart = mysqli_prepare($link, "SELECT COUNT(*) FROM cart_details WHERE member_id = ? AND flag = ?");
+  if ($stmt_cart) {
+    $flag_0 = 0;
+    mysqli_stmt_bind_param($stmt_cart, "ii", $memberId, $flag_0);
+    mysqli_stmt_execute($stmt_cart);
+    mysqli_stmt_bind_result($stmt_cart, $num_items);
+    mysqli_stmt_fetch($stmt_cart);
+    mysqli_stmt_close($stmt_cart);
+  }
+}
 
 $tables = mysqli_query($link, "SELECT * FROM tables");
 ?>
@@ -22,7 +35,7 @@ $tables = mysqli_query($link, "SELECT * FROM tables");
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rezervare Masă - Albita Restaurant</title>
+  <title>Rezervare Masă - Deluxe Restaurant</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
@@ -44,11 +57,11 @@ $tables = mysqli_query($link, "SELECT * FROM tables");
 
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-      <a class="navbar-brand" href="index.php">Food Plaza</a>
+      <a class="navbar-brand" href="index.php">Deluxe Restaurant</a>
       <div class="navbar-nav">
-        <a class="nav-link" href="logout.php">Home</a>
+        <a class="nav-link" href="index.php">Home</a>
         <a class="nav-link" href="foodzone.php">Food Zone</a>
-        <a class="nav-link" href="member-index.php">My Account</a>
+        <a class="nav-link" href="cont.php">My Account</a>
       </div>
     </div>
   </nav>
@@ -58,19 +71,23 @@ $tables = mysqli_query($link, "SELECT * FROM tables");
       <h2 class="text-center mb-4">Rezervă o Masă</h2>
 
       <div class="d-flex justify-content-center gap-2 mb-4 flex-wrap">
-        <a href="member-index.php" class="btn btn-sm btn-outline-secondary">Dashboard</a>
-        <a href="cart.php" class="btn btn-sm btn-outline-secondary">Cart [<?php echo $num_items; ?>]</a>
+        <a href="cont.php" class="btn btn-sm btn-outline-secondary">Dashboard</a>
+        <a href="cart.php" class="btn btn-sm btn-outline-secondary">Cart [<?php echo (int) $num_items; ?>]</a>
         <a href="logout.php" class="btn btn-sm btn-danger">Logout</a>
       </div>
 
-      <form name="tableForm" method="post" action="reserve-exec.php?id=<?php echo $_SESSION['SESS_MEMBER_ID']; ?>">
+      <form name="tableForm" method="post"
+        action="reserve-exec.php?id=<?php echo htmlspecialchars($_SESSION['SESS_MEMBER_ID']); ?>">
         <div class="mb-3">
           <label class="form-label fw-bold">Selectează Masa:</label>
           <select name="table" class="form-select" required>
             <option value="">- alege masa -</option>
             <?php
-            while ($row = mysqli_fetch_assoc($tables)) {
-              echo "<option value='" . $row['table_id'] . "'>" . $row['table_name'] . "</option>";
+            if ($tables) {
+              while ($row = mysqli_fetch_assoc($tables)) {
+                echo "<option value='" . htmlspecialchars($row['table_id']) . "'>" . htmlspecialchars($row['table_name']) . "</option>";
+              }
+              mysqli_free_result($tables);
             }
             ?>
           </select>
@@ -95,3 +112,6 @@ $tables = mysqli_query($link, "SELECT * FROM tables");
 </body>
 
 </html>
+<?php
+mysqli_close($link);
+?>

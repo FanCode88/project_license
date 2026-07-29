@@ -1,0 +1,258 @@
+/* Stiluri Moderne - Fundal Portocaliu Unitar (Categories Management) */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #ff8c00;
+  color: #2d3748;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+#page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Antet (Header & Navigare) */
+#header {
+  background: #1a202c;
+  color: #ffffff;
+  padding: 24px 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#header h1 {
+  margin: 0 0 16px 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #ff8c00;
+}
+
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.nav-links a {
+  color: #a0aec0;
+  background: #2d3748;
+  padding: 9px 16px;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: #ffffff;
+  background: #ff8c00;
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
+}
+
+.nav-links a.logout {
+  background: #fff5f5;
+  color: #e53e3e;
+  border: 1px solid #fed7d7;
+}
+
+.nav-links a.logout:hover {
+  background: #e53e3e;
+  color: #ffffff;
+}
+
+/* Conținut Principal */
+#container {
+  flex: 1;
+  max-width: 550px;
+  width: 100%;
+  margin: 40px auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  width: 100%;
+}
+
+/* Card și Tabel cu lățime și chenare perfect aliniate */
+.allocation-card,
+.modern-table {
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.allocation-card {
+  padding: 24px;
+}
+
+.allocation-card h3 {
+  margin: 0 0 16px 0;
+  color: #1a202c;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Form Group și Input-uri */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 6px;
+}
+
+.textfield {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  background-color: #f7fafc;
+  color: #2d3748;
+  font-size: 14px;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: all 0.25s ease;
+}
+
+.textfield:focus {
+  outline: none;
+  border-color: #ff8c00;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
+}
+
+.form-action {
+  /* text-align: right; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 16px;
+}
+
+/* Tabele Moderne */
+.modern-table {
+  width: 400px;
+  height: 350px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  padding-bottom: 10px;
+}
+
+.modern-table caption {
+  background: #ffffff;
+  padding: 20px 20px 12px 20px;
+  text-align: left;
+  border-bottom: 1px solid #edf2f7;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.modern-table caption h3 {
+  margin: 0;
+  color: #1a202c;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.modern-table th {
+  background: #f7fafc;
+  color: #718096;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.8px;
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 2px solid #edf2f7;
+}
+
+.modern-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #edf2f7;
+  vertical-align: middle;
+  font-size: 14px;
+  color: #4a5568;
+}
+
+.modern-table tr:last-child td {
+  border-bottom: none;
+}
+
+.modern-table tr:hover {
+  background-color: #ddd;
+  border-radius: 10px !important;
+  overflow: hidden;
+}
+
+/* Butoane */
+.btn-primary,
+input[type='submit'] {
+  background-color: #ff8c00;
+  color: #ffffff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.25s ease;
+}
+
+.btn-primary:hover,
+input[type='submit']:hover {
+  background-color: #e07b00;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.btn-remove {
+  background-color: #fff5f5;
+  color: #e53e3e;
+  padding: 8px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 13px;
+  border: 1px solid #fed7d7;
+  transition: all 0.25s ease;
+  display: inline-block;
+}
+
+.btn-remove:hover {
+  background-color: #e53e3e;
+  color: #ffffff;
+  border-color: #e53e3e;
+}
+
+/* Subsol (Footer) */
+#footer {
+  background: #1a202c;
+  border-top: 1px solid #2d3748;
+  padding: 24px;
+  text-align: center;
+  color: #a0aec0;
+  font-size: 13px;
+  margin-top: auto;
+}

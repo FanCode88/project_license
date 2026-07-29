@@ -41,7 +41,8 @@ class QRrsblock
     $this->eccLength = $el;
     $this->ecc = $ecc;
   }
-};
+}
+;
 
 //##########################################################################
 
@@ -98,7 +99,7 @@ class QRrawcode
     $eccPos = 0;
     for ($i = 0; $i < QRspec::rsBlockNum1($spec); $i++) {
       $ecc = array_slice($this->ecccode, $eccPos);
-      $this->rsblocks[$blockNo] = new QRrsblock($dl, array_slice($this->datacode, $dataPos), $el,  $ecc, $rs);
+      $this->rsblocks[$blockNo] = new QRrsblock($dl, array_slice($this->datacode, $dataPos), $el, $ecc, $rs);
       $this->ecccode = array_merge(array_slice($this->ecccode, 0, $eccPos), $ecc);
 
       $dataPos += $dl;
@@ -113,7 +114,8 @@ class QRrawcode
     $el = QRspec::rsEccCodes2($spec);
     $rs = QRrs::init_rs(8, 0x11d, 0, 1, $el, 255 - $dl - $el);
 
-    if ($rs == NULL) return -1;
+    if ($rs == NULL)
+      return -1;
 
     for ($i = 0; $i < QRspec::rsBlockNum2($spec); $i++) {
       $ecc = array_slice($this->ecccode, $eccPos);
@@ -252,7 +254,8 @@ class QRcode
     }
 
     $input = new QRinput($version, $level);
-    if ($input == NULL) return NULL;
+    if ($input == NULL)
+      return NULL;
 
     $ret = $input->append($input, QR_MODE_8, strlen($string), str_split($string));
     if ($ret < 0) {
@@ -272,7 +275,8 @@ class QRcode
     }
 
     $input = new QRinput($version, $level);
-    if ($input == NULL) return NULL;
+    if ($input == NULL)
+      return NULL;
 
     $ret = QRsplit::splitStringToQRinput($string, $input, $hint, $casesensitive);
     if ($ret < 0) {
@@ -383,7 +387,8 @@ class FrameFiller
           }
         }
       }
-      if ($x < 0 || $y < 0) return null;
+      if ($x < 0 || $y < 0)
+        return null;
 
       $this->x = $x;
       $this->y = $y;
@@ -391,7 +396,8 @@ class FrameFiller
 
     return array('x' => $x, 'y' => $y);
   }
-};
+}
+;
 
 //##########################################################################
 
@@ -492,7 +498,7 @@ class QRencode
       if ($err != '')
         QRtools::log($outfile, $err);
 
-      $maxSize = (int)(QR_PNG_MAXIMUM_SIZE / (count($tab) + 2 * $this->margin));
+      $maxSize = (int) (QR_PNG_MAXIMUM_SIZE / (count($tab) + 2 * $this->margin));
 
       QRimage::png($tab, $outfile, min(max(1, $this->size), $maxSize), $this->margin, $saveandprint);
     } catch (Exception $e) {

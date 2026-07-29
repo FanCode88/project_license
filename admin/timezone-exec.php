@@ -1,46 +1,53 @@
 <?php
 //Start session
 session_start();
+require_once('auth.php');
 
 //Include database connection details
 require_once('connection/config.php');
 
-//Connect to mysql server
-$link = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
+//Connect to mysql server using modern MySQLi
+$link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
 if (!$link) {
-  die('Failed to connect to server: ' . mysql_error());
+  die('Failed to connect to server: ' . mysqli_connect_error());
 }
 
-//Select database
-$db = mysql_select_db(DB_DATABASE);
-if (!$db) {
-  die("Unable to select database");
-}
+//Set charset to utf8mb4 for proper character encoding
+mysqli_set_charset($link, "utf8mb4");
 
 //Function to sanitize values received from the form. Prevents SQL injection
-function clean($str)
+function clean($conn, $str)
 {
-  $str = @trim($str);
-  if (get_magic_quotes_gpc()) {
-    $str = stripslashes($str);
-  }
-  return mysql_real_escape_string($str);
+  $str = trim($str);
+  return mysqli_real_escape_string($conn, $str);
 }
 
 //Sanitize the POST values
-$name = clean($_POST['name']);
+$name = isset($_POST['name']) ? clean($link, $_POST['name']) : '';
 
 //define a default value for flag
 $flag_0 = 0;
 
-//Create INSERT query
-$qry = "INSERT INTO timezones(timezone_reference,flag) VALUES('$name','$flag_0')";
-$result = @mysql_query($qry);
+//Create INSERT query using prepared statements
+$stmt = mysqli_prepare($link, "INSERT INTO timezones (timezone_reference, flag) VALUES (?, ?)");
+if ($stmt) {
+  mysqli_stmt_bind_param($stmt, "si", $name, $flag_0);
+  $result = mysqli_stmt_execute($stmt);
 
-//Check whether the query was successful or not
-if ($result) {
-  header("location: options.php");
-  exit();
+  //Check whether the query was successful or not
+  if ($result) {
+    mysqli_stmt_close($stmt);
+    mysqli_close($link);
+    header("location: options.php");
+    exit();
+  } else {
+    $error = mysqli_error($link);
+    mysqli_stmt_close($stmt);
+    mysqli_close($link);
+    die("Query failed " . $error);
+  }
 } else {
-  die("Query failed " . mysql_error());
+  $error = mysqli_error($link);
+  mysqli_close($link);
+  die("Query preparation failed " . $error);
 }

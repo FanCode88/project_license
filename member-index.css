@@ -1,6 +1,6 @@
 body {
   background: #f8f9fa;
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 .page-wrapper {
@@ -222,7 +222,7 @@ body {
 }
 
 .footer-custom h3 {
-  font-family: "Satisfy", cursive;
+  font-family: 'Satisfy', cursive;
   color: #ff7a18;
   font-size: 1.8rem;
 }

@@ -15,10 +15,12 @@ if (!$link) {
   die('Failed to connect to server: ' . mysqli_connect_error());
 }
 
+// Setează setul de caractere la utf8mb4
+mysqli_set_charset($link, "utf8mb4");
+
 $flag_1 = 1;
 
 // Inițializare variabile globale pentru interogări
-$result_polls = null;
 $excellent_value = 0;
 $good_value = 0;
 $average_value = 0;
@@ -44,11 +46,11 @@ $partyhalls_allocated = mysqli_query($link, "SELECT * FROM reservations_details 
 // Preluare mâncare pentru dropdown
 $foods = mysqli_query($link, "SELECT * FROM food_details");
 
-// Procesare formular Ratings
-if (isset($_POST['Submit'])) {
+// Procesare formular Ratings folosind prepared statements pentru securitate împotriva SQL Injection
+if (isset($_POST['Submit']) && $_POST['food'] !== 'select') {
   function clean($link, $str)
   {
-    return mysqli_real_escape_string($link, trim($str));
+    return trim($str);
   }
   $id = clean($link, $_POST['food']);
 
@@ -58,41 +60,68 @@ if (isset($_POST['Submit'])) {
   while ($r = mysqli_fetch_assoc($ratings)) {
     $rates[] = $r['rate_id'];
   }
+  mysqli_free_result($ratings);
 
   $excellent = isset($rates[0]) ? $rates[0] : 0;
-  $good      = isset($rates[1]) ? $rates[1] : 0;
-  $average   = isset($rates[2]) ? $rates[2] : 0;
-  $bad       = isset($rates[3]) ? $rates[3] : 0;
-  $worse     = isset($rates[4]) ? $rates[4] : 0;
+  $good = isset($rates[1]) ? $rates[1] : 0;
+  $average = isset($rates[2]) ? $rates[2] : 0;
+  $bad = isset($rates[3]) ? $rates[3] : 0;
+  $worse = isset($rates[4]) ? $rates[4] : 0;
 
-  // Rulăm numărătorile direct din SQL pentru performanță și stabilitate
-  $total_q     = mysqli_query($link, "SELECT COUNT(*) as total FROM polls_details WHERE food_id='$id'");
-  $excellent_q = mysqli_query($link, "SELECT COUNT(*) as total FROM polls_details WHERE food_id='$id' AND rate_id='$excellent'");
-  $good_q      = mysqli_query($link, "SELECT COUNT(*) as total FROM polls_details WHERE food_id='$id' AND rate_id='$good'");
-  $average_q   = mysqli_query($link, "SELECT COUNT(*) as total FROM polls_details WHERE food_id='$id' AND rate_id='$average'");
-  $bad_q       = mysqli_query($link, "SELECT COUNT(*) as total FROM polls_details WHERE food_id='$id' AND rate_id='$bad'");
-  $worse_q     = mysqli_query($link, "SELECT COUNT(*) as total FROM polls_details WHERE food_id='$id' AND rate_id='$worse'");
+  // Rulăm numărătorile folosind prepared statements
+  $total_value = 0;
+  $stmt_total = mysqli_prepare($link, "SELECT COUNT(*) as total FROM polls_details WHERE food_id = ?");
+  if ($stmt_total) {
+    mysqli_stmt_bind_param($stmt_total, "i", $id);
+    mysqli_stmt_execute($stmt_total);
+    $res = mysqli_stmt_get_result($stmt_total);
+    if ($row = mysqli_fetch_assoc($res)) {
+      $total_value = $row['total'];
+    }
+    mysqli_stmt_close($stmt_total);
+  }
 
-  $total_value     = mysqli_fetch_assoc($total_q)['total'];
-  $excellent_value = mysqli_fetch_assoc($excellent_q)['total'];
-  $good_value      = mysqli_fetch_assoc($good_q)['total'];
-  $average_value   = mysqli_fetch_assoc($average_q)['total'];
-  $bad_value       = mysqli_fetch_assoc($bad_q)['total'];
-  $worse_value     = mysqli_fetch_assoc($worse_q)['total'];
+  $getCount = function ($link, $food_id, $rate_id) {
+    $count = 0;
+    $stmt = mysqli_prepare($link, "SELECT COUNT(*) as total FROM polls_details WHERE food_id = ? AND rate_id = ?");
+    if ($stmt) {
+      mysqli_stmt_bind_param($stmt, "ii", $food_id, $rate_id);
+      mysqli_stmt_execute($stmt);
+      $res = mysqli_stmt_get_result($stmt);
+      if ($row = mysqli_fetch_assoc($res)) {
+        $count = $row['total'];
+      }
+      mysqli_stmt_close($stmt);
+    }
+    return $count;
+  };
+
+  $excellent_value = $getCount($link, $id, $excellent);
+  $good_value = $getCount($link, $id, $good);
+  $average_value = $getCount($link, $id, $average);
+  $bad_value = $getCount($link, $id, $bad);
+  $worse_value = $getCount($link, $id, $worse);
 
   if ($total_value > 0) {
     $excellent_rate = round(($excellent_value / $total_value) * 100, 2);
-    $good_rate      = round(($good_value / $total_value) * 100, 2);
-    $average_rate   = round(($average_value / $total_value) * 100, 2);
-    $bad_rate       = round(($bad_value / $total_value) * 100, 2);
-    $worse_rate     = round(($worse_value / $total_value) * 100, 2);
+    $good_rate = round(($good_value / $total_value) * 100, 2);
+    $average_rate = round(($average_value / $total_value) * 100, 2);
+    $bad_rate = round(($bad_value / $total_value) * 100, 2);
+    $worse_rate = round(($worse_value / $total_value) * 100, 2);
   }
 
-  // Preluare nume mâncare selectată
-  $food_info_q = mysqli_query($link, "SELECT food_name FROM food_details WHERE food_id='$id'");
-  if ($food_info = mysqli_fetch_assoc($food_info_q)) {
-    $food_name = $food_info['food_name'];
+  // Preluare nume mâncare selectată folosind prepared statement
+  $stmt_food = mysqli_prepare($link, "SELECT food_name FROM food_details WHERE food_id = ?");
+  if ($stmt_food) {
+    mysqli_stmt_bind_param($stmt_food, "i", $id);
+    mysqli_stmt_execute($stmt_food);
+    $res_food = mysqli_stmt_get_result($stmt_food);
+    if ($food_info = mysqli_fetch_assoc($res_food)) {
+      $food_name = $food_info['food_name'];
+    }
+    mysqli_stmt_close($stmt_food);
   }
+
   $has_ratings = true;
 }
 ?>
@@ -103,7 +132,9 @@ if (isset($_POST['Submit'])) {
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Administrare</title>
-  <link href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,400i,600,600i,700,700i|Satisfy|Comic+Neue:300,300i,400,400i,700,700i" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,400i,600,600i,700,700i|Satisfy|Comic+Neue:300,300i,400,400i,700,700i"
+    rel="stylesheet">
   <link href="assets/vendor/animate.css/animate.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
@@ -125,8 +156,10 @@ if (isset($_POST['Submit'])) {
     <section class="breadcrumbs">
       <div class="container">
         <h1>Panou Control Administrator</h1>
-        <a href="profile.php">Profil</a> | <a href="categories.php">Categorii</a> | <a href="foods.php">Produse</a> | <a href="accounts.php">Conturi</a>
-        | <a href="orders.php">Comenzi</a> | <a href="reservations.php">Rezervări</a> | <a href="allocation.php">Personal</a>
+        <a href="profile.php">Profil</a> | <a href="categories.php">Categorii</a> | <a href="foods.php">Produse</a> | <a
+          href="accounts.php">Conturi</a>
+        | <a href="orders.php">Comenzi</a> | <a href="reservations.php">Rezervări</a> | <a
+          href="allocation.php">Personal</a>
         | <a href="messages.php">Mesaje</a> | <a href="options.php">Opțiuni</a> | <a href="logout.php">Ieșire</a>
       </div>
     </section>
@@ -163,6 +196,14 @@ if (isset($_POST['Submit'])) {
           $res9 = mysqli_num_rows($partyhalls_allocated);
           $res10 = $res8 - $res9;
 
+          mysqli_free_result($members);
+          mysqli_free_result($orders_placed);
+          mysqli_free_result($orders_processed);
+          mysqli_free_result($tables_reserved);
+          mysqli_free_result($tables_allocated);
+          mysqli_free_result($partyhalls_reserved);
+          mysqli_free_result($partyhalls_allocated);
+
           echo "<tr>";
           echo "<td>$res1</td><td>$res2</td><td>$res3</td><td>$res4</td>";
           echo "<td>$res5</td><td>$res6</td><td>$res7</td>";
@@ -186,8 +227,9 @@ if (isset($_POST['Submit'])) {
                 <option value="select">- selectează produsul -</option>
                 <?php
                 while ($row = mysqli_fetch_array($foods)) {
-                  echo "<option value='{$row['food_id']}'>{$row['food_name']}</option>";
+                  echo "<option value=\"" . htmlspecialchars($row['food_id']) . "\">" . htmlspecialchars($row['food_name']) . "</option>";
                 }
+                mysqli_free_result($foods);
                 ?>
               </select>
             </td>
@@ -229,3 +271,6 @@ if (isset($_POST['Submit'])) {
 </body>
 
 </html>
+<?php
+mysqli_close($link);
+?>

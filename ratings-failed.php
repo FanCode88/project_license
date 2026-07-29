@@ -1,4 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
@@ -27,14 +28,17 @@
       <div style="border:#bd6f2f solid 1px;padding:4px 6px 2px 6px">
         <p>&nbsp;</p>
         <div class="error">The food has already been rated!</div>
-        <p>You are seeing this page because you have already rated this food. <a href="member-index.php">Click Here</a> to go back to your account and rate another food.</p>
+        <p>You are seeing this page because you have already rated this food. <a href="member-index.php">Click Here</a>
+          to go back to your account and rate another food.</p>
       </div>
     </div>
     <div id="footer">
-      <div class="bottom_menu"><a href="index.php">Home Page</a> | <a href="aboutus.php">About Us</a> | <a href="specialdeals.php">Special Deals</a> | <a href="foodzone.php">Food Zone</a> | <a href="#">Affiliate Program</a> |<br>
+      <div class="bottom_menu"><a href="index.php">Home Page</a> | <a href="aboutus.php">About Us</a> | <a
+          href="specialdeals.php">Special Deals</a> | <a href="foodzone.php">Food Zone</a> | <a href="#">Affiliate
+          Program</a> |<br>
         | <a href="admin/index.php" target="_blank">Administrator</a> |</div>
 
-      <div class="bottom_addr">&copy; 2023 Cristina Voinea. All Rights Reserved</div>
+      <div class="bottom_addr">&copy; 2026 Saceanu Ionut Sorin. All Rights Reserved</div>
     </div>
   </div>
 </body>

@@ -1,48 +1,44 @@
 <?php
-// Checking connection and connecting to a database
+// Verificare și conectare la baza de date folosind MySQLi
 require_once('connection/config.php');
 
-// Connect to mysql server
-$link = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
+// Conectare la serverul MySQL
+$link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
 if (!$link) {
-  die('Failed to connect to server: ' . mysql_error());
+  die('Failed to connect to server: ' . mysqli_connect_error());
 }
 
-// Select database
-$db = mysql_select_db(DB_DATABASE);
-if (!$db) {
-  die("Unable to select database");
-}
+// Setăm charset-ul pentru conexiune
+mysqli_set_charset($link, "utf8mb4");
 
-// Selecting all records from the food_details table
-$result = mysql_query("SELECT * FROM food_details, categories WHERE food_details.food_category = categories.category_id")
+// Interogare pentru toate înregistrările din food_details și categorii
+$query_all = "SELECT * FROM food_details, categories WHERE food_details.food_category = categories.category_id";
+$result = mysqli_query($link, $query_all)
   or die("A problem has occured ... Please check back after few hours.");
 
-// Retrieve categories from the categories table
-$categories = mysql_query("SELECT * FROM categories")
+// Preluare categorii din tabela categories
+$categories = mysqli_query($link, "SELECT * FROM categories")
   or die("A problem has occured ... Please check back after few hours.");
 
-// Retrieve a currency from the currencies table
+// Preluare monedă din tabela currencies
 $flag_1 = 1;
-$currencies = mysql_query("SELECT * FROM currencies WHERE flag = '$flag_1'")
+$currencies = mysqli_query($link, "SELECT * FROM currencies WHERE flag = '$flag_1'")
   or die("A problem has occured ... Please check back after few hours.");
 
 if (isset($_POST['Submit'])) {
-  // Function to sanitize values received from the form
-  function clean($str)
+  // Funcție modernizată de curățare a valorilor primite din formular
+  function clean($link, $str)
   {
-    $str = @trim($str);
-    if (get_magic_quotes_gpc()) {
-      $str = stripslashes($str);
-    }
-    return mysql_real_escape_string($str);
+    $str = trim($str);
+    return mysqli_real_escape_string($link, $str);
   }
 
-  // Get category id
-  $id = clean($_POST['category']);
+  // Preluare ID categorie
+  $id = clean($link, $_POST['category']);
 
-  // Selecting filtered records based on category id
-  $result = mysql_query("SELECT * FROM food_details, categories WHERE food_category = '$id' AND food_details.food_category = categories.category_id")
+  // Interogare filtrată bazată pe ID-ul categoriei
+  $query_filtered = "SELECT * FROM food_details, categories WHERE food_category = '$id' AND food_details.food_category = categories.category_id";
+  $result = mysqli_query($link, $query_filtered)
     or die("A problem has occured ... Please check back after few hours.");
 }
 ?>
@@ -209,7 +205,8 @@ if (isset($_POST['Submit'])) {
   <nav class="navbar navbar-expand-lg navbar-light sticky-top">
     <div class="container">
       <a class="navbar-brand" href="index.php"><i class="bi bi-egg-fried"></i> Food Plaza</a>
-      <button class="navbar-collapse-toggler navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <button class="navbar-collapse-toggler navbar-toggler" type="button" data-bs-toggle="collapse"
+        data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
@@ -235,17 +232,19 @@ if (isset($_POST['Submit'])) {
 
     <!-- Zona Filtrare Categorie Stil Card -->
     <div class="card p-4 mb-4 shadow-sm border-0 bg-white rounded-3">
-      <form name="categoryForm" id="categoryForm" method="post" action="foodzone.php" onsubmit="return categoriesValidate(this)">
+      <form name="categoryForm" id="categoryForm" method="post" action="foodzone.php"
+        onsubmit="return categoriesValidate(this)">
         <div class="row g-3 align-items-center justify-content-center">
           <div class="col-auto">
-            <label for="category" class="col-form-label fw-bold"><i class="bi bi-filter"></i> Filter by Category:</label>
+            <label for="category" class="col-form-label fw-bold"><i class="bi bi-filter"></i> Filter by
+              Category:</label>
           </div>
           <div class="col-md-4">
             <select name="category" id="category" class="form-select">
               <option value="select">- select category -</option>
               <?php
-              while ($row = mysql_fetch_array($categories)) {
-                echo "<option value=\"" . $row['category_id'] . "\">" . $row['category_name'] . "</option>";
+              while ($row = mysqli_fetch_array($categories)) {
+                echo "<option value=\"" . $row['category_id'] . "\">" . htmlspecialchars($row['category_name']) . "</option>";
               }
               ?>
             </select>
@@ -273,30 +272,31 @@ if (isset($_POST['Submit'])) {
           </thead>
           <tbody>
             <?php
-            $count = mysql_num_rows($result);
+            $count = mysqli_num_rows($result);
             if (isset($_POST['Submit']) && $count < 1) {
               echo "<tr><td colspan='6' class='py-5 text-muted'><i class='bi bi-exclamation-circle fs-3 d-block mb-2'></i> No products found in this category.</td></tr>";
             } else {
-              $symbol = mysql_fetch_assoc($currencies);
-              while ($row = mysql_fetch_assoc($result)) {
+              $symbol = mysqli_fetch_assoc($currencies);
+              while ($row = mysqli_fetch_assoc($result)) {
                 echo "<tr>";
                 // Foto Produs
-                echo "<td><a href='images/" . $row['food_photo'] . "' target='_blank'><img src='images/" . $row['food_photo'] . "' width='80' height='70' class='shadow-sm border'></a></td>";
+                echo "<td><a href='images/" . htmlspecialchars($row['food_photo']) . "' target='_blank'><img src='images/" . htmlspecialchars($row['food_photo']) . "' width='80' height='70' class='shadow-sm border'></a></td>";
                 // Nume
                 echo "<td class='fw-bold'>" . htmlspecialchars($row['food_name']) . "</td>";
-                // Descriere
-                echo "<td><div class='ingredient-qr'><a href='images/" . $row['foodQR'] . "' target='_blank'><img src='images/" . $row['foodQR'] . "' width='90' height='90' class='shadow-sm border rounded'></a><div class='mt-2'><small class='ingredient-text'>Scan to View</small></div></div></td>";
+                // Descriere / QR
+                echo "<td><div class='ingredient-qr'><a href='images/" . htmlspecialchars($row['foodQR']) . "' target='_blank'><img src='images/" . htmlspecialchars($row['foodQR']) . "' width='90' height='90' class='shadow-sm border rounded'></a><div class='mt-2'><small class='ingredient-text'>Scan to View</small></div></div></td>";
                 // Categorie
                 echo "<td><span class='badge bg-light text-dark border px-3 py-2'>" . htmlspecialchars($row['category_name']) . "</span></td>";
                 // Pret
-                echo "<td class='fw-bold fs-5'><span class='price-btn'>" . $symbol['currency_symbol'] . " " . number_format($row['food_price'], 2) . "</span></td>";
+                $currency_symbol = $symbol ? $symbol['currency_symbol'] : '$';
+                echo "<td class='fw-bold fs-5'><span class='price-btn'>" . $currency_symbol . " " . number_format($row['food_price'], 2) . "</span></td>";
                 // Buton adaugare
                 echo '<td><a href="cart-exec.php?id=' . $row['food_id'] . '" class="btn btn-outline-success btn-sm rounded-pill px-3"><i class="bi bi-cart-plus"></i> Add To Cart</a></td>';
                 echo "</tr>";
               }
             }
-            mysql_free_result($result);
-            mysql_close($link);
+            mysqli_free_result($result);
+            mysqli_close($link);
             ?>
           </tbody>
         </table>

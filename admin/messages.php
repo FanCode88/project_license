@@ -11,15 +11,19 @@ if (!$link) {
   die('Failed to connect to server: ' . mysqli_connect_error());
 }
 
+// Set charset to utf8mb4 for proper character encoding
+mysqli_set_charset($link, "utf8mb4");
+
 // selecting all records from the messages table
 $query = "SELECT * FROM messages";
 $result = mysqli_query($link, $query) or die("There are no records to display ... \n" . mysqli_error($link));
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Messages</title>
   <link href="stylesheets/admin_styles.css" rel="stylesheet" type="text/css" />
   <script language="JavaScript" src="validation/admin.js"></script>
@@ -52,20 +56,24 @@ $result = mysqli_query($link, $query) or die("There are no records to display ..
         <div class="allocation-card" style="width: 100%; max-width: 600px;">
           <h3>Send a Message</h3>
 
-          <form id="messageForm" name="messageForm" method="post" action="message-exec.php" onsubmit="return messageValidate(this)">
+          <form id="messageForm" name="messageForm" method="post" action="message-exec.php"
+            onsubmit="return messageValidate(this)">
             <div class="form-group">
               <label for="subject">Subject</label>
-              <input type="text" name="subject" id="subject" class="textfield" style="width: 100%; padding: 8px; box-sizing: border-box;" />
+              <input type="text" name="subject" id="subject" class="textfield"
+                style="width: 100%; padding: 8px; box-sizing: border-box;" />
             </div>
 
             <div class="form-group">
               <label for="txtmessage">Message Box</label>
-              <textarea name="txtmessage" id="txtmessage" class="textfield" rows="5" style="width: 100%; padding: 8px; box-sizing: border-box; font-family: inherit;"></textarea>
+              <textarea name="txtmessage" id="txtmessage" class="textfield" rows="5"
+                style="width: 100%; padding: 8px; box-sizing: border-box; font-family: inherit;"></textarea>
             </div>
 
             <div class="form-action" style="text-align: center; gap: 10px; display: flex; justify-content: center;">
               <input type="submit" name="Submit" value="Send Message" class="btn-primary" />
-              <input type="reset" name="Reset" value="Clear Field" class="btn-primary" style="background: #6c757d; border-color: #5a6268;" />
+              <input type="reset" name="Reset" value="Clear Field" class="btn-primary"
+                style="background: #6c757d; border-color: #5a6268;" />
             </div>
           </form>
         </div>

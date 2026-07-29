@@ -84,7 +84,9 @@ $currencies = mysql_query("SELECT * FROM currencies WHERE flag='$flag_1'")
   <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,400i,600,600i,700,700i|Satisfy|Comic+Neue:300,300i,400,400i,700,700i" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,400i,600,600i,700,700i|Satisfy|Comic+Neue:300,300i,400,400i,700,700i"
+    rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="assets/vendor/animate.css/animate.min.css" rel="stylesheet">
@@ -167,7 +169,8 @@ $currencies = mysql_query("SELECT * FROM currencies WHERE flag='$flag_1'")
           <h1>MY SHOPPING CART</h1>
           <hr>
           <h3><a href="foodzone.php">Continue Shopping!</a></h3>
-          <form name="quantityForm" id="quantityForm" method="post" action="update-quantity.php" onsubmit="return updateQuantity(this)">
+          <form name="quantityForm" id="quantityForm" method="post" action="update-quantity.php"
+            onsubmit="return updateQuantity(this)">
             <table width="560" align="center">
               <tr>
                 <td>Item ID</td>

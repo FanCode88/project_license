@@ -1,0 +1,191 @@
+/* Stiluri Moderne - Fundal Portocaliu Unitar (Orders Management) */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #ff8c00;
+  color: #2d3748;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+#page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Antet (Header & Navigare) */
+#header {
+  background: #1a202c;
+  color: #ffffff;
+  padding: 24px 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#header h1 {
+  margin: 0 0 16px 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #ff8c00;
+}
+
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.nav-links a {
+  color: #a0aec0;
+  background: #2d3748;
+  padding: 9px 16px;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: #ffffff;
+  background: #ff8c00;
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
+}
+
+.nav-links a.logout {
+  background: #fff5f5;
+  color: #e53e3e;
+  border: 1px solid #fed7d7;
+}
+
+.nav-links a.logout:hover {
+  background: #e53e3e;
+  color: #ffffff;
+}
+
+/* Conținut Principal */
+#container {
+  flex: 1;
+  max-width: 1300px;
+  width: 100%;
+  margin: 40px auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* Tabele Moderne */
+.modern-table {
+  width: 100%;
+  background: #ffffff;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  margin-bottom: 30px;
+  box-sizing: border-box;
+}
+
+.modern-table caption {
+  background: #ffffff;
+  padding: 24px 20px 16px 20px;
+  text-align: left;
+  border-bottom: 1px solid #edf2f7;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.modern-table caption h3 {
+  margin: 0;
+  color: #1a202c;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.modern-table th {
+  background: #f7fafc;
+  color: #718096;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.8px;
+  padding: 16px;
+  text-align: left;
+  border-bottom: 2px solid #edf2f7;
+  white-space: nowrap;
+}
+
+.modern-table td {
+  padding: 16px;
+  border-bottom: 1px solid #edf2f7;
+  vertical-align: middle;
+  font-size: 14px;
+  color: #4a5568;
+}
+
+.modern-table tr:last-child td {
+  border-bottom: none;
+}
+
+.modern-table tr:hover {
+  background-color: #fffaf0;
+}
+
+/* Stiluri Utilitare pentru Tabel */
+.font-bold {
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.price-cell {
+  font-weight: 600;
+  color: #ff8c00;
+}
+
+.desc-cell {
+  color: #718096;
+  max-width: 200px;
+}
+
+/* Buton de Ștergere / Remove */
+.btn-remove {
+  background-color: #fff5f5;
+  color: #e53e3e;
+  padding: 8px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 13px;
+  border: 1px solid #fed7d7;
+  transition: all 0.25s ease;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.btn-remove:hover {
+  background-color: #e53e3e;
+  color: #ffffff;
+  border-color: #e53e3e;
+}
+
+/* Elemente Decorative */
+hr {
+  border: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.4);
+  margin: 30px 0;
+}
+
+/* Subsol (Footer) */
+#footer {
+  background: #1a202c;
+  border-top: 1px solid #2d3748;
+  padding: 24px;
+  text-align: center;
+  color: #a0aec0;
+  font-size: 13px;
+  margin-top: auto;
+}

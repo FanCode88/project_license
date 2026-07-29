@@ -150,8 +150,8 @@ class QRbitstream
       return array();
     }
 
-    $data = array_fill(0, (int)(($size + 7) / 8), 0);
-    $bytes = (int)($size / 8);
+    $data = array_fill(0, (int) (($size + 7) / 8), 0);
+    $bytes = (int) ($size / 8);
 
     $p = 0;
 

@@ -3,60 +3,71 @@ require_once('auth.php');
 require_once('qrlib.php');
 require_once('connection/config.php');
 
-// Conectare MySQL (folosește MySQLi pentru compatibilitate)
-$link = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
-if (!$link) {
-  die('Failed to connect to server: ' . mysql_error());
-}
-$db = mysql_select_db(DB_DATABASE);
-if (!$db) {
-  die("Unable to select database");
+// Conectare MySQL folosind PDO (înlocuirea funcțiilor deprecate mysql_*)
+try {
+  $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
+  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+  die("Failed to connect to server: " . $e->getMessage());
 }
 
 $memberId = $_SESSION['SESS_MEMBER_ID'];
 
-// Istoric comenzi
-$result = mysql_query("SELECT * FROM orders_details,cart_details,food_details,categories,quantities,members
-                       WHERE members.member_id='$memberId'
-                       AND orders_details.member_id='$memberId'
-                       AND orders_details.cart_id=cart_details.cart_id
-                       AND cart_details.food_id=food_details.food_id
-                       AND food_details.food_category=categories.category_id
-                       AND cart_details.quantity_id=quantities.quantity_id")
-  or die("There are no records to display ... \n" . mysql_error());
+// Istoric comenzi (folosind Prepared Statements)
+$stmt = $pdo->prepare("SELECT * FROM orders_details, cart_details, food_details, categories, quantities, members
+                       WHERE members.member_id = :memberId1
+                       AND orders_details.member_id = :memberId2
+                       AND orders_details.cart_id = cart_details.cart_id
+                       AND cart_details.food_id = food_details.food_id
+                       AND food_details.food_category = categories.category_id
+                       AND cart_details.quantity_id = quantities.quantity_id");
+$stmt->execute([
+  'memberId1' => $memberId,
+  'memberId2' => $memberId
+]);
+$orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Număr articole în coș
 $flag_0 = 0;
-$items = mysql_query("SELECT * FROM cart_details WHERE member_id='$memberId' AND flag='$flag_0'")
-  or die("Something is wrong ... \n" . mysql_error());
-$num_items = mysql_num_rows($items);
+$stmt_items = $pdo->prepare("SELECT * FROM cart_details WHERE member_id = :memberId AND flag = :flag");
+$stmt_items->execute([
+  'memberId' => $memberId,
+  'flag' => $flag_0
+]);
+$num_items = $stmt_items->rowCount();
 
 // Număr mesaje
-$messages = mysql_query("SELECT * FROM messages")
-  or die("Something is wrong ... \n" . mysql_error());
-$num_messages = mysql_num_rows($messages);
+$stmt_messages = $pdo->query("SELECT * FROM messages");
+$num_messages = $stmt_messages->rowCount();
 
 // Monedă activă
 $flag_1 = 1;
-$currencies = mysql_query("SELECT * FROM currencies WHERE flag='$flag_1'")
-  or die("A problem has occured ... \n" . "Our team is working on it at the moment ... \n" . "Please check back after few hours.");
+$stmt_curr = $pdo->prepare("SELECT * FROM currencies WHERE flag = :flag");
+$stmt_curr->execute(['flag' => $flag_1]);
+$symbol = $stmt_curr->fetch(PDO::FETCH_ASSOC);
 
 // Rezervări
-$reservations = mysql_query("SELECT r.*, t.table_name
-                             FROM reservations_details r
-                             LEFT JOIN tables t ON r.table_id = t.table_id
-                             WHERE r.member_id = '$memberId'
-                             ORDER BY r.Reserve_Date DESC") or die("Eroare la rezervări: " . mysql_error()); ?>
+$stmt_res = $pdo->prepare("SELECT r.*, t.table_name
+                           FROM reservations_details r
+                           LEFT JOIN tables t ON r.table_id = t.table_id
+                           WHERE r.member_id = :memberId
+                           ORDER BY r.Reserve_Date DESC");
+$stmt_res->execute(['memberId' => $memberId]);
+$reservations = $stmt_res->fetchAll(PDO::FETCH_ASSOC);
+?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Food Plaza: Member Home</title>
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,400i,600,600i,700,700i|Satisfy|Comic+Neue:300,300i,400,400i,700,700i" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,400i,600,600i,700,700i|Satisfy|Comic+Neue:300,300i,400,400i,700,700i"
+    rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="assets/vendor/animate.css/animate.min.css" rel="stylesheet">
@@ -68,6 +79,7 @@ $reservations = mysql_query("SELECT r.*, t.table_name
   <link href="assets/css/style.css" rel="stylesheet">
   <link href="member-index.css" rel="stylesheet">
 </head>
+
 <body>
 
   <!-- ======= Top Bar ======= -->
@@ -109,7 +121,7 @@ $reservations = mysql_query("SELECT r.*, t.table_name
 
         <!-- Welcome Header -->
         <div class="welcome-header">
-          <h1>👋 Bun venit, <span><?php echo $_SESSION['SESS_FIRST_NAME']; ?></span>!</h1>
+          <h1>👋 Bun venit, <span><?php echo htmlspecialchars($_SESSION['SESS_FIRST_NAME']); ?></span>!</h1>
           <p>Aici poți vizualiza istoricul comenzilor, rezervările și poți gestiona contul tău.</p>
         </div>
 
@@ -171,28 +183,28 @@ $reservations = mysql_query("SELECT r.*, t.table_name
             </thead>
             <tbody>
               <?php
-              $symbol = mysql_fetch_assoc($currencies);
-              while ($row = mysql_fetch_array($result)) {
+              $currencySymbol = $symbol ? $symbol['currency_symbol'] : '$';
+              foreach ($orders as $row) {
                 echo "<tr>";
-                echo "<td><strong>#" . $row['order_id'] . "</strong></td>";
-                echo '<td><a href="images/' . $row['food_photo'] . '" target="_blank"><img src="images/' . $row['food_photo'] . '" alt="Food"></a></td>';
-                echo "<td><strong>" . $row['food_name'] . "</strong></td>";
-                echo "<td><span class='badge bg-secondary'>" . $row['category_name'] . "</span></td>";
-                echo "<td>" . $symbol['currency_symbol'] . number_format($row['food_price'], 2) . "</td>";
-                echo "<td><span class='badge bg-dark'>" . $row['quantity_value'] . "</span></td>";
-                echo "<td><strong style='color:#ff7a18;'>" . $symbol['currency_symbol'] . number_format($row['total'], 2) . "</strong></td>";
+                echo "<td><strong>#" . htmlspecialchars($row['order_id']) . "</strong></td>";
+                echo '<td><a href="images/' . htmlspecialchars($row['food_photo']) . '" target="_blank"><img src="images/' . htmlspecialchars($row['food_photo']) . '" alt="Food" style="width: 50px; height: 50px; object-fit: cover;"></a></td>';
+                echo "<td><strong>" . htmlspecialchars($row['food_name']) . "</strong></td>";
+                echo "<td><span class='badge bg-secondary'>" . htmlspecialchars($row['category_name']) . "</span></td>";
+                echo "<td>" . $currencySymbol . number_format($row['food_price'], 2) . "</td>";
+                echo "<td><span class='badge bg-dark'>" . htmlspecialchars($row['quantity_value']) . "</span></td>";
+                echo "<td><strong style='color:#ff7a18;'>" . $currencySymbol . number_format($row['total'], 2) . "</strong></td>";
                 echo "<td>" . date('d.m.Y', strtotime($row['delivery_date'])) . "</td>";
                 echo '<td>
-<div class="d-flex gap-2 justify-content-center flex-wrap">
-<a href="cont.php?action=cancel&id=' . $row['order_id'] . '" class="btn btn-sm btn-outline-danger-custom" onclick="return confirm(\'Ești sigur că vrei să anulezi această comandă?\')">
-<i class="bi bi-x-circle"></i> Anulează
-</a>
+                <div class="d-flex gap-2 justify-content-center flex-wrap">
+                <a href="cont.php?action=cancel&id=' . htmlspecialchars($row['order_id']) . '" class="btn btn-sm btn-outline-danger-custom" onclick="return confirm(\'Ești sigur că vrei să anulezi această comandă?\')">
+                <i class="bi bi-x-circle"></i> Anulează
+                </a>
 
-<a href="cont.php?action=order_again&id=' . $row['order_id'] . '" class="btn btn-sm btn-success-custom" onclick="return confirm(\'Ești sigur că vrei să comanzi din nou acest produs?\')">
-<i class="bi bi-arrow-repeat"></i> Repetă
-</a>
-</div>
-</td>';
+                <a href="cont.php?action=order_again&id=' . htmlspecialchars($row['order_id']) . '" class="btn btn-sm btn-success-custom" onclick="return confirm(\'Ești sigur că vrei să comanzi din nou acest produs?\')">
+                <i class="bi bi-arrow-repeat"></i> Repetă
+                </a>
+                </div>
+                </td>';
                 echo "</tr>";
               }
               ?>
@@ -220,20 +232,15 @@ $reservations = mysql_query("SELECT r.*, t.table_name
             </thead>
             <tbody>
               <?php
-              while ($res = mysql_fetch_array($reservations)) {
+              foreach ($reservations as $res) {
                 echo "<tr>";
-                echo "<td><strong>#" . $res['ReservationID'] . "</strong></td>";
+                echo "<td><strong>#" . htmlspecialchars($res['ReservationID']) . "</strong></td>";
                 echo "<td>" . htmlspecialchars($res['table_name']) . "</td>";
                 echo "<td>" . date('d.m.Y', strtotime($res['Reserve_Date'])) . "</td>";
                 echo "<td>" . date('H:i', strtotime($res['Reserve_Time'])) . "</td>";
-                echo '<td><a href="javascript:void(0);"class="btn btn-sm btn-outline-danger-custom"onclick="cancelReservation(' . $res['ReservationID'] . ', this)"><i class="bi bi-x-circle"></i> Anulează</a></td>';
+                echo '<td><a href="javascript:void(0);" class="btn btn-sm btn-outline-danger-custom" onclick="cancelReservation(' . htmlspecialchars($res['ReservationID']) . ', this)"><i class="bi bi-x-circle"></i> Anulează</a></td>';
                 echo "</tr>";
               }
-
-              // Eliberare resurse
-              mysql_free_result($result);
-              mysql_free_result($reservations);
-              mysql_close($link);
               ?>
             </tbody>
           </table>

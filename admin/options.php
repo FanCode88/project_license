@@ -11,6 +11,9 @@ if (!$link) {
   die('Failed to connect to server: ' . mysqli_connect_error());
 }
 
+// Set charset to utf8mb4 for proper character encoding
+mysqli_set_charset($link, "utf8mb4");
+
 // retrieve categories from the categories table
 $categories = mysqli_query($link, "SELECT * FROM categories")
   or die("Something is wrong ... \n" . mysqli_error($link));
@@ -51,13 +54,14 @@ $partyhalls = mysqli_query($link, "SELECT * FROM partyhalls")
 $questions = mysqli_query($link, "SELECT * FROM questions")
   or die("Something is wrong ... \n" . mysqli_error($link));
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Options</title>
-  <link href="stylesheets/admin_styles.css" rel="stylesheet" type="text/css" />
+  <link href="stylesheets/options.css" rel="stylesheet" type="text/css" />
   <script language="JavaScript" src="validation/admin.js"></script>
 </head>
 
@@ -90,7 +94,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
         <div class="allocation-card" style="width: 100%; max-width: 430px; margin: 0;">
           <h3>Manage Categories</h3>
 
-          <form name="categoryAddForm" action="categories-exec.php" method="post" onsubmit="return categoriesValidate(this)">
+          <form name="categoryAddForm" action="categories-exec.php" method="post"
+            onsubmit="return categoriesValidate(this)">
             <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end;">
               <div style="flex: 1;">
                 <label>Add New Category</label>
@@ -100,7 +105,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
             </div>
           </form>
 
-          <form name="categoryDeleteForm" action="delete-category.php" method="post" onsubmit="return categoriesValidate(this)">
+          <form name="categoryDeleteForm" action="delete-category.php" method="post"
+            onsubmit="return categoriesValidate(this)">
             <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end; margin-top: 15px;">
               <div style="flex: 1;">
                 <label>Select Category</label>
@@ -114,7 +120,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
                   ?>
                 </select>
               </div>
-              <input type="submit" name="Delete" value="Remove" class="btn-primary" style="background: #dc3545; border-color: #dc3545; padding: 7px 15px;" />
+              <input type="submit" name="Delete" value="Remove" class="btn-primary"
+                style="background: #dc3545; border-color: #dc3545; padding: 7px 15px;" />
             </div>
           </form>
         </div>
@@ -123,7 +130,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
         <div class="allocation-card" style="width: 100%; max-width: 430px; margin: 0;">
           <h3>Manage Quantities</h3>
 
-          <form name="quantityAddForm" action="quantities-exec.php" method="post" onsubmit="return quantitiesValidate(this)">
+          <form name="quantityAddForm" action="quantities-exec.php" method="post"
+            onsubmit="return quantitiesValidate(this)">
             <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end;">
               <div style="flex: 1;">
                 <label>Add Quantity</label>
@@ -133,7 +141,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
             </div>
           </form>
 
-          <form name="quantityDeleteForm" action="delete-quantity.php" method="post" onsubmit="return quantitiesValidate(this)">
+          <form name="quantityDeleteForm" action="delete-quantity.php" method="post"
+            onsubmit="return quantitiesValidate(this)">
             <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end; margin-top: 15px;">
               <div style="flex: 1;">
                 <label>Select Quantity</label>
@@ -147,7 +156,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
                   ?>
                 </select>
               </div>
-              <input type="submit" name="Delete" value="Remove" class="btn-primary" style="background: #dc3545; border-color: #dc3545; padding: 7px 15px;" />
+              <input type="submit" name="Delete" value="Remove" class="btn-primary"
+                style="background: #dc3545; border-color: #dc3545; padding: 7px 15px;" />
             </div>
           </form>
         </div>
@@ -156,7 +166,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
         <div class="allocation-card" style="width: 100%; max-width: 430px; margin: 0;">
           <h3>Manage Currencies</h3>
 
-          <form name="currencyAddForm" action="currencies-exec.php" method="post" onsubmit="return currenciesValidate(this)">
+          <form name="currencyAddForm" action="currencies-exec.php" method="post"
+            onsubmit="return currenciesValidate(this)">
             <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end;">
               <div style="flex: 1;">
                 <label>Add Currency</label>
@@ -167,7 +178,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
           </form>
 
           <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <form name="currencyDeleteForm" action="delete-currency.php" method="post" onsubmit="return currenciesValidate(this)" style="flex: 1;">
+            <form name="currencyDeleteForm" action="delete-currency.php" method="post"
+              onsubmit="return currenciesValidate(this)" style="flex: 1;">
               <div class="form-group">
                 <label>Remove</label>
                 <select name="currency" id="currency" style="width: 100%;">
@@ -179,11 +191,13 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
                   mysqli_free_result($currencies);
                   ?>
                 </select>
-                <input type="submit" name="Delete" value="Remove" class="btn-primary" style="background: #dc3545; border-color: #dc3545; width: 100%; margin-top: 5px; padding: 5px;" />
+                <input type="submit" name="Delete" value="Remove" class="btn-primary"
+                  style="background: #dc3545; border-color: #dc3545; width: 100%; margin-top: 5px; padding: 5px;" />
               </div>
             </form>
 
-            <form name="currencyActivateForm" action="activate-currency.php" method="post" onsubmit="return currenciesValidate(this)" style="flex: 1;">
+            <form name="currencyActivateForm" action="activate-currency.php" method="post"
+              onsubmit="return currenciesValidate(this)" style="flex: 1;">
               <div class="form-group">
                 <label>Activate</label>
                 <select name="currency" id="currency_act" style="width: 100%;">
@@ -195,7 +209,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
                   mysqli_free_result($currencies_1);
                   ?>
                 </select>
-                <input type="submit" name="Update" value="Activate" class="btn-primary" style="background: #28a745; border-color: #28a745; width: 100%; margin-top: 5px; padding: 5px;" />
+                <input type="submit" name="Update" value="Activate" class="btn-primary"
+                  style="background: #28a745; border-color: #28a745; width: 100%; margin-top: 5px; padding: 5px;" />
               </div>
             </form>
           </div>
@@ -209,13 +224,15 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
             <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end;">
               <div style="flex: 1;">
                 <label>Add Rate Level</label>
-                <input type="text" name="name" id="name" class="textfield" style="width: 100%; box-sizing: border-box;" />
+                <input type="text" name="name" id="name" class="textfield"
+                  style="width: 100%; box-sizing: border-box;" />
               </div>
               <input type="submit" name="Insert" value="Add" class="btn-primary" style="padding: 7px 15px;" />
             </div>
           </form>
 
-          <form name="ratingDeleteForm" action="delete-rating.php" method="post" onsubmit="return ratingsValidate(this)">
+          <form name="ratingDeleteForm" action="delete-rating.php" method="post"
+            onsubmit="return ratingsValidate(this)">
             <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end; margin-top: 15px;">
               <div style="flex: 1;">
                 <label>Select Level</label>
@@ -229,7 +246,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
                   ?>
                 </select>
               </div>
-              <input type="submit" name="Delete" value="Remove" class="btn-primary" style="background: #dc3545; border-color: #dc3545; padding: 7px 15px;" />
+              <input type="submit" name="Delete" value="Remove" class="btn-primary"
+                style="background: #dc3545; border-color: #dc3545; padding: 7px 15px;" />
             </div>
           </form>
         </div>
@@ -238,7 +256,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
         <div class="allocation-card" style="width: 100%; max-width: 430px; margin: 0;">
           <h3>Manage Timezones</h3>
 
-          <form name="timezoneAddForm" action="timezone-exec.php" method="post" onsubmit="return timezonesValidate(this)">
+          <form name="timezoneAddForm" action="timezone-exec.php" method="post"
+            onsubmit="return timezonesValidate(this)">
             <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end;">
               <div style="flex: 1;">
                 <label>Add Timezone</label>
@@ -249,7 +268,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
           </form>
 
           <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <form name="timezoneDeleteForm" action="delete-timezone.php" method="post" onsubmit="return timezonesValidate(this)" style="flex: 1;">
+            <form name="timezoneDeleteForm" action="delete-timezone.php" method="post"
+              onsubmit="return timezonesValidate(this)" style="flex: 1;">
               <div class="form-group">
                 <label>Remove</label>
                 <select name="timezone" id="timezone" style="width: 100%;">
@@ -261,11 +281,13 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
                   mysqli_free_result($timezones);
                   ?>
                 </select>
-                <input type="submit" name="Delete" value="Remove" class="btn-primary" style="background: #dc3545; border-color: #dc3545; width: 100%; margin-top: 5px; padding: 5px;" />
+                <input type="submit" name="Delete" value="Remove" class="btn-primary"
+                  style="background: #dc3545; border-color: #dc3545; width: 100%; margin-top: 5px; padding: 5px;" />
               </div>
             </form>
 
-            <form name="timezoneActivateForm" action="activate-timezone.php" method="post" onsubmit="return timezonesValidate(this)" style="flex: 1;">
+            <form name="timezoneActivateForm" action="activate-timezone.php" method="post"
+              onsubmit="return timezonesValidate(this)" style="flex: 1;">
               <div class="form-group">
                 <label>Activate</label>
                 <select name="timezone" id="timezone_act" style="width: 100%;">
@@ -277,7 +299,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
                   mysqli_free_result($timezones_1);
                   ?>
                 </select>
-                <input type="submit" name="Update" value="Activate" class="btn-primary" style="background: #28a745; border-color: #28a745; width: 100%; margin-top: 5px; padding: 5px;" />
+                <input type="submit" name="Update" value="Activate" class="btn-primary"
+                  style="background: #28a745; border-color: #28a745; width: 100%; margin-top: 5px; padding: 5px;" />
               </div>
             </form>
           </div>
@@ -311,7 +334,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
                   ?>
                 </select>
               </div>
-              <input type="submit" name="Delete" value="Remove" class="btn-primary" style="background: #dc3545; border-color: #dc3545; padding: 7px 15px;" />
+              <input type="submit" name="Delete" value="Remove" class="btn-primary"
+                style="background: #dc3545; border-color: #dc3545; padding: 7px 15px;" />
             </div>
           </form>
         </div>
@@ -320,7 +344,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
         <div class="allocation-card" style="width: 100%; max-width: 430px; margin: 0;">
           <h3>Manage Party-Halls</h3>
 
-          <form name="partyhallAddForm" action="partyhalls-exec.php" method="post" onsubmit="return partyhallsValidate(this)">
+          <form name="partyhallAddForm" action="partyhalls-exec.php" method="post"
+            onsubmit="return partyhallsValidate(this)">
             <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end;">
               <div style="flex: 1;">
                 <label>Hall Name/Number</label>
@@ -330,7 +355,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
             </div>
           </form>
 
-          <form name="partyhallDeleteForm" action="delete-partyhall.php" method="post" onsubmit="return partyhallsValidate(this)">
+          <form name="partyhallDeleteForm" action="delete-partyhall.php" method="post"
+            onsubmit="return partyhallsValidate(this)">
             <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end; margin-top: 15px;">
               <div style="flex: 1;">
                 <label>Select Party-Hall</label>
@@ -344,7 +370,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
                   ?>
                 </select>
               </div>
-              <input type="submit" name="Delete" value="Remove" class="btn-primary" style="background: #dc3545; border-color: #dc3545; padding: 7px 15px;" />
+              <input type="submit" name="Delete" value="Remove" class="btn-primary"
+                style="background: #dc3545; border-color: #dc3545; padding: 7px 15px;" />
             </div>
           </form>
         </div>
@@ -353,7 +380,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
         <div class="allocation-card" style="width: 100%; max-width: 430px; margin: 0;">
           <h3>Manage Questions</h3>
 
-          <form name="questionAddForm" action="questions-exec.php" method="post" onsubmit="return questionsValidate(this)">
+          <form name="questionAddForm" action="questions-exec.php" method="post"
+            onsubmit="return questionsValidate(this)">
             <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end;">
               <div style="flex: 1;">
                 <label>Add Question</label>
@@ -363,7 +391,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
             </div>
           </form>
 
-          <form name="questionDeleteForm" action="delete-question.php" method="post" onsubmit="return questionsValidate(this)">
+          <form name="questionDeleteForm" action="delete-question.php" method="post"
+            onsubmit="return questionsValidate(this)">
             <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end; margin-top: 15px;">
               <div style="flex: 1;">
                 <label>Select Question</label>
@@ -377,7 +406,8 @@ $questions = mysqli_query($link, "SELECT * FROM questions")
                   ?>
                 </select>
               </div>
-              <input type="submit" name="Delete" value="Remove" class="btn-primary" style="background: #dc3545; border-color: #dc3545; padding: 7px 15px;" />
+              <input type="submit" name="Delete" value="Remove" class="btn-primary"
+                style="background: #dc3545; border-color: #dc3545; padding: 7px 15px;" />
             </div>
           </form>
         </div>

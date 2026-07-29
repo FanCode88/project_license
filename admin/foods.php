@@ -4,11 +4,14 @@ ini_set('display_errors', 1);
 require_once('auth.php');
 require_once('connection/config.php');
 
-// Conectare la baza de date
+// Conectare la baza de date folosind MySQLi modern
 $link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
 if (!$link) {
   die('Failed to connect to server: ' . mysqli_connect_error());
 }
+
+// Setează setul de caractere la utf8mb4
+mysqli_set_charset($link, "utf8mb4");
 
 // Interogări
 $result = mysqli_query($link, "SELECT * FROM food_details, categories WHERE food_details.food_category=categories.category_id")
@@ -21,13 +24,14 @@ $flag_1 = 1;
 $currency_result = mysqli_query($link, "SELECT * FROM currencies WHERE flag='$flag_1'");
 $symbol = mysqli_fetch_assoc($currency_result);
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Manage Foods</title>
-  <link href="stylesheets/admin_styles.css" rel="stylesheet" type="text/css" />
+  <link href="stylesheets/foods.css" rel="stylesheet" type="text/css" />
   <script language="JavaScript" src="validation/admin.js"></script>
 </head>
 
@@ -36,7 +40,7 @@ $symbol = mysqli_fetch_assoc($currency_result);
     <div id="header">
       <h1>Foods Management</h1>
       <div class="nav-links">
-        <a href="index.php">Home</a>
+        <a href="../index.php">Home</a>
         <a href="categories.php">Categories</a>
         <a href="foods.php" class="active">Foods</a>
         <a href="accounts.php">Accounts</a>
@@ -54,7 +58,8 @@ $symbol = mysqli_fetch_assoc($currency_result);
       <!-- Formular Adăugare Food -->
       <div class="allocation-card" style="margin-bottom: 30px;">
         <h3>Add a New Food Item</h3>
-        <form name="foodsForm" id="foodsForm" action="foods-exec.php" method="post" enctype="multipart/form-data" onsubmit="return foodsValidate(this)">
+        <form name="foodsForm" id="foodsForm" action="foods-exec.php" method="post" enctype="multipart/form-data"
+          onsubmit="return foodsValidate(this)">
           <table width="100%" border="0" cellpadding="5" cellspacing="0">
             <tr>
               <th>Name</th>
@@ -75,6 +80,7 @@ $symbol = mysqli_fetch_assoc($currency_result);
                   while ($row = mysqli_fetch_assoc($categories)) {
                     echo "<option value=\"" . $row['category_id'] . "\">" . htmlspecialchars($row['category_name']) . "</option>";
                   }
+                  mysqli_free_result($categories);
                   ?>
                 </select>
               </td>
@@ -113,6 +119,9 @@ $symbol = mysqli_fetch_assoc($currency_result);
           echo "</tr>";
         }
         mysqli_free_result($result);
+        if ($currency_result) {
+          mysqli_free_result($currency_result);
+        }
         mysqli_close($link);
         ?>
       </table>

@@ -1,17 +1,23 @@
 <?php
+// Pornim sesiunea și forțăm afișarea erorilor pentru depanare
+session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once('auth.php');
 require_once('connection/config.php');
 
 // Conexiune securizată PDO (Standard modern)
 try {
-  $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
-  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  // Interogare modernă
-  $stmt = $pdo->query("SELECT * FROM members");
-  $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Interogare modernă
+    $stmt = $pdo->query("SELECT * FROM members");
+    $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-  die("Eroare: " . $e->getMessage());
+    die("Eroare: " . $e->getMessage());
 }
 ?>
 
@@ -83,7 +89,7 @@ try {
                     <td><?php echo htmlspecialchars($row['lastname']); ?></td>
                     <td><?php echo htmlspecialchars($row['login']); ?></td>
                     <td>
-                      <a href="delete-member.php?id=<?php echo $row['member_id']; ?>"
+                      <a href="delete-member.php?id=<?php echo htmlspecialchars($row['member_id']); ?>"
                         class="btn btn-sm btn-outline-danger"
                         onclick="return confirm('Ești sigur că vrei să ștergi acest membru?')">
                         Șterge

@@ -11,30 +11,46 @@ if (!$link) {
   die('Failed to connect to server: ' . mysqli_connect_error());
 }
 
+// Set charset to utf8mb4 for proper character encoding
+mysqli_set_charset($link, "utf8mb4");
+
 // selecting all records from the staff table
 $query_staff = "SELECT * FROM staff";
 $staff = mysqli_query($link, $query_staff) or die("There are no records to display ... \n" . mysqli_error($link));
 
 // get order ids from the orders_details table based on flag=0
 $flag_0 = 0;
-$query_orders = "SELECT * FROM orders_details WHERE flag='$flag_0'";
-$orders = mysqli_query($link, $query_orders) or die("There are no records to display ... \n" . mysqli_error($link));
+$query_orders = "SELECT * FROM orders_details WHERE flag=?";
+$stmt_orders = mysqli_prepare($link, $query_orders);
+mysqli_stmt_bind_param($stmt_orders, "i", $flag_0);
+mysqli_stmt_execute($stmt_orders);
+$orders = mysqli_stmt_get_result($stmt_orders);
+if (!$orders) {
+  die("There are no records to display ... \n" . mysqli_error($link));
+}
 
 // get reservation ids from the reservations_details table based on flag=0
-$query_reservations = "SELECT * FROM reservations_details WHERE flag='$flag_0'";
-$reservations = mysqli_query($link, $query_reservations) or die("There are no records to display ... \n" . mysqli_error($link));
+$query_reservations = "SELECT * FROM reservations_details WHERE flag=?";
+$stmt_reservations = mysqli_prepare($link, $query_reservations);
+mysqli_stmt_bind_param($stmt_reservations, "i", $flag_0);
+mysqli_stmt_execute($stmt_reservations);
+$reservations = mysqli_stmt_get_result($stmt_reservations);
+if (!$reservations) {
+  die("There are no records to display ... \n" . mysqli_error($link));
+}
 
 // selecting records for form dropdowns (reusable results)
 $staff_1 = mysqli_query($link, $query_staff) or die("There are no records to display ... \n" . mysqli_error($link));
 $staff_2 = mysqli_query($link, $query_staff) or die("There are no records to display ... \n" . mysqli_error($link));
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Staff Allocation</title>
-  <link href="stylesheets/admin_styles.css" rel="stylesheet" type="text/css" />
+  <link href="stylesheets/allocation.css" rel="stylesheet" type="text/css" />
   <script language="JavaScript" src="validation/admin.js"></script>
 </head>
 
@@ -80,7 +96,7 @@ $staff_2 = mysqli_query($link, $query_staff) or die("There are no records to dis
           echo "<td>" . htmlspecialchars($row['firstname']) . "</td>";
           echo "<td>" . htmlspecialchars($row['lastname']) . "</td>";
           echo "<td class=\"desc-cell\">" . htmlspecialchars($row['Street_Address']) . "</td>";
-          echo '<td><a href="delete-staff.php?id=' . $row['StaffID'] . '" class="btn-remove">Remove Staff</a></td>';
+          echo '<td><a href="delete-staff.php?id=' . htmlspecialchars($row['StaffID']) . '" class="btn-remove">Remove Staff</a></td>';
           echo "</tr>";
         }
         mysqli_free_result($staff);
@@ -97,7 +113,8 @@ $staff_2 = mysqli_query($link, $query_staff) or die("There are no records to dis
           <h3>Orders Allocation</h3>
           <p class="required-info"><span class="required-star">*</span> Required fields</p>
 
-          <form id="ordersAllocationForm" name="ordersAllocationForm" method="post" action="orders-allocation.php" onsubmit="return ordersAllocationValidate(this)">
+          <form id="ordersAllocationForm" name="ordersAllocationForm" method="post" action="orders-allocation.php"
+            onsubmit="return ordersAllocationValidate(this)">
             <div class="form-group">
               <label for="orderid"><span class="required-star">*</span> Order ID</label>
               <select name="orderid" id="orderid">
@@ -107,6 +124,7 @@ $staff_2 = mysqli_query($link, $query_staff) or die("There are no records to dis
                   echo "<option value=\"" . htmlspecialchars($row['order_id']) . "\">" . htmlspecialchars($row['order_id']) . "</option>";
                 }
                 mysqli_free_result($orders);
+                mysqli_stmt_close($stmt_orders);
                 ?>
               </select>
             </div>
@@ -135,7 +153,8 @@ $staff_2 = mysqli_query($link, $query_staff) or die("There are no records to dis
           <h3>Reservations Allocation</h3>
           <p class="required-info"><span class="required-star">*</span> Required fields</p>
 
-          <form id="reservationsAllocationForm" name="reservationsAllocationForm" method="post" action="reservations-allocation.php" onsubmit="return reservationsAllocationValidate(this)">
+          <form id="reservationsAllocationForm" name="reservationsAllocationForm" method="post"
+            action="reservations-allocation.php" onsubmit="return reservationsAllocationValidate(this)">
             <div class="form-group">
               <label for="reservationid"><span class="required-star">*</span> Reservation ID</label>
               <select name="reservationid" id="reservationid">
@@ -145,6 +164,7 @@ $staff_2 = mysqli_query($link, $query_staff) or die("There are no records to dis
                   echo "<option value=\"" . htmlspecialchars($row['ReservationID']) . "\">" . htmlspecialchars($row['ReservationID']) . "</option>";
                 }
                 mysqli_free_result($reservations);
+                mysqli_stmt_close($stmt_reservations);
                 ?>
               </select>
             </div>
@@ -180,4 +200,5 @@ $staff_2 = mysqli_query($link, $query_staff) or die("There are no records to dis
   </div>
 </body>
 <?php mysqli_close($link); ?>
+
 </html>

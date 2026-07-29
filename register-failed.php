@@ -1,4 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
@@ -29,11 +30,15 @@
       <div style="border:#bd6f2f solid 1px;padding:4px 6px 2px 6px">
         <p>&nbsp;</p>
         <div class="error">Registration Failed!</div>
-        <p>You are seeing this page because your attempt to create a new account has failed. You have used an email address that is already in use. <a href="login-register.php">Click Here</a> to try again. Or <a href="JavaScript: resetPassword()">Click Here</a> to reset your password.</p>
+        <p>You are seeing this page because your attempt to create a new account has failed. You have used an email
+          address that is already in use. <a href="login-register.php">Click Here</a> to try again. Or <a
+            href="JavaScript: resetPassword()">Click Here</a> to reset your password.</p>
       </div>
     </div>
     <div id="footer">
-      <div class="bottom_menu"><a href="index.php">Home Page</a> | <a href="aboutus.php">About Us</a> | <a href="specialdeals.php">Special Deals</a> | <a href="foodzone.php">Food Zone</a> | <a href="#">Affiliate Program</a> |<br>
+      <div class="bottom_menu"><a href="index.php">Home Page</a> | <a href="aboutus.php">About Us</a> | <a
+          href="specialdeals.php">Special Deals</a> | <a href="foodzone.php">Food Zone</a> | <a href="#">Affiliate
+          Program</a> |<br>
         | <a href="admin/index.php" target="_blank">Administrator</a> |</div>
 
       <div class="bottom_addr">&copy; 2026. All Rights Reserved</div>
