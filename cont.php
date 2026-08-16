@@ -326,7 +326,6 @@ if (!file_exists($qr_dir)) {
   <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
   <script src="assets/js/main.js"></script>
-  <script src="assets/js/main.js"></script>
 
 </body>
 

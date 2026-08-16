@@ -87,6 +87,19 @@ if (!file_exists($qr_dir)) {
       text-align: center;
       font-weight: bold;
     }
+
+    .book-a-table-btn {
+      background: #ffb03b;
+      color: #fff;
+      border-radius: 50px;
+      margin: 0 0 0 20px;
+      padding: 10px 25px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      transition: 0.3s;
+      white-space: nowrap;
+    }
   </style>
 </head>
 
@@ -107,12 +120,15 @@ if (!file_exists($qr_dir)) {
         <ul>
           <li><a class="nav-link scrollto" href="index.php">Home</a></li>
           <li><a class="nav-link scrollto" href="index.php#menu">Our Food</a></li>
+          <li><a class="nav-link scrollto" href="/RM/admin/access-denied.php">Specials</a></li>
           <li><a class="nav-link scrollto" href="cont.php">Account</a></li>
+          <li><a class="nav-link scrollto" href="index.php#chefs">Chefs</a></li>
+          <li><a class="nav-link scrollto" href="index.php#gallery">Gallery</a></li>
           <li><a class="nav-link scrollto" href="contactus.php">Contact</a></li>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav>
-      <a href="cont.php" class="book-a-table-btn scrollto">My Account</a>
+      <a href="cont.php" class="book-a-table-btn">My Account</a>
     </div>
   </header>
 

@@ -1,4 +1,4 @@
-2026-07-27 19:42:08: <br />
+2026-08-16 14:43:38: <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.25 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
@@ -148,7 +148,7 @@
 <b>Deprecated</b>:  Implicit conversion from float 15.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 15.75 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
-2026-07-27 19:43:54: <br />
+2026-08-16 14:47:08: <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.25 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
@@ -298,7 +298,7 @@
 <b>Deprecated</b>:  Implicit conversion from float 15.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 15.75 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
-2026-07-29 20:28:26: <br />
+2026-08-16 14:47:15: <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.25 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
@@ -448,7 +448,7 @@
 <b>Deprecated</b>:  Implicit conversion from float 15.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 15.75 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
-2026-07-29 20:28:40: <br />
+2026-08-16 14:51:22: <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.25 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
@@ -598,7 +598,7 @@
 <b>Deprecated</b>:  Implicit conversion from float 15.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 15.75 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
-2026-07-29 20:28:42: <br />
+2026-08-16 14:56:45: <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.25 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
@@ -748,7 +748,7 @@
 <b>Deprecated</b>:  Implicit conversion from float 15.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 15.75 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
-2026-07-29 20:29:38: <br />
+2026-08-16 14:59:38: <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.25 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
@@ -898,7 +898,7 @@
 <b>Deprecated</b>:  Implicit conversion from float 15.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 15.75 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
-2026-07-29 20:29:56: <br />
+2026-08-16 14:59:52: <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.25 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
@@ -1048,7 +1048,7 @@
 <b>Deprecated</b>:  Implicit conversion from float 15.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 15.75 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
-2026-07-29 20:30:23: <br />
+2026-08-16 15:09:29: <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.25 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
@@ -1198,7 +1198,7 @@
 <b>Deprecated</b>:  Implicit conversion from float 15.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 15.75 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
-2026-07-29 20:30:45: <br />
+2026-08-16 15:09:50: <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.25 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
@@ -1348,7 +1348,7 @@
 <b>Deprecated</b>:  Implicit conversion from float 15.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 15.75 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
-2026-07-29 20:36:24: <br />
+2026-08-16 15:10:04: <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.25 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
@@ -1498,7 +1498,7 @@
 <b>Deprecated</b>:  Implicit conversion from float 15.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 15.75 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
-2026-07-29 20:36:56: <br />
+2026-08-16 15:10:08: <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.25 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
@@ -1648,7 +1648,7 @@
 <b>Deprecated</b>:  Implicit conversion from float 15.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 15.75 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
-2026-07-29 20:37:26: <br />
+2026-08-16 15:10:12: <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.25 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
@@ -1798,7 +1798,7 @@
 <b>Deprecated</b>:  Implicit conversion from float 15.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 15.75 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>148</b><br />
-2026-07-29 20:37:45: <br />
+2026-08-16 15:16:01: <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.25 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />

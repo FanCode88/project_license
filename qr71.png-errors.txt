@@ -1,4 +1,4 @@
-2026-07-27 18:58:44: <br />
+2026-08-16 15:09:50: <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.25 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />
 <br />
 <b>Deprecated</b>:  Implicit conversion from float 0.5 to int loses precision in <b>/Applications/XAMPP/xamppfiles/htdocs/RM/qrencode.php</b> on line <b>144</b><br />

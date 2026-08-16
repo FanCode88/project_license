@@ -172,6 +172,10 @@ try {
           <?php endif; ?>
 
           <li><a class="nav-link scrollto" href="admin/index.php" target="_blank">Admin</a></li>
+          <li><a class="nav-link scrollto" href="index.php#chefs">Chefs</a></li>
+          <li><a class="nav-link scrollto" href="index.php#gallery">Gallery</a></li>
+          <li><a class="nav-link scrollto" href="contactus.php">Contact</a></li>
+
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav>
@@ -358,7 +362,8 @@ try {
                         <option value="select">- Selectează întrebarea -</option>
                         <?php foreach ($questions as $q): ?>
                           <option value="<?php echo $q['question_id']; ?>">
-                            <?php echo htmlspecialchars($q['question_text']); ?></option>
+                            <?php echo htmlspecialchars($q['question_text']); ?>
+                          </option>
                         <?php endforeach; ?>
                       </select>
                     </div>
@@ -502,7 +507,8 @@ try {
                         src="images/<?php echo $row['special_photo']; ?>" width="80" height="70" class="rounded"></a></td>
                   <td><b><?php echo htmlspecialchars($row['special_name']); ?></b></td>
                   <td style="max-width: 250px; text-align: left;">
-                    <small><?php echo htmlspecialchars($row['special_description']); ?></small></td>
+                    <small><?php echo htmlspecialchars($row['special_description']); ?></small>
+                  </td>
                   <td><small><?php echo $row['special_start_date']; ?></small></td>
                   <td><small><?php echo $row['special_end_date']; ?></small></td>
                   <td><span

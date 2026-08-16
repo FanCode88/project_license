@@ -1,7 +1,8 @@
 <?php
 require_once('auth.php');
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
@@ -30,9 +31,14 @@ require_once('auth.php');
     <div id="center">
       <h1>Billing Address</h1>
       <hr>
-      <p>We have found out that you don't have a billing address in your account. Please add a billing address in the form below. It is the same address that will be used to deliver your food orders. Please note that ONLY correct street/physical addresses should be used in order to ensure smooth delivery of your food orders. For more information <a href="contactus.php">Click Here</a> to contact us.</p>
+      <p>We have found out that you don't have a billing address in your account. Please add a billing address in the
+        form below. It is the same address that will be used to deliver your food orders. Please note that ONLY correct
+        street/physical addresses should be used in order to ensure smooth delivery of your food orders. For more
+        information <a href="contactus.php">Click Here</a> to contact us.</p>
       <div style="border:#bd6f2f solid 1px;padding:4px 6px 2px 6px">
-        <form id="billingForm" name="billingForm" method="post" action="billing-exec.php?id=<?php echo $_SESSION['SESS_MEMBER_ID']; ?>" onsubmit="return billingValidate(this)">
+        <form id="billingForm" name="billingForm" method="post"
+          action="billing-exec.php?id=<?php echo $_SESSION['SESS_MEMBER_ID']; ?>"
+          onsubmit="return billingValidate(this)">
           <table width="300" border="0" align="center" cellpadding="2" cellspacing="0">
             <CAPTION>
               <h3>ADD DELIVERY/BILLING ADDRESS</h3>
@@ -79,7 +85,9 @@ require_once('auth.php');
       </div>
     </div>
     <div id="footer">
-      <div class="bottom_menu"><a href="index.php">Home Page</a> | <a href="aboutus.php">About Us</a> | <a href="specialdeals.php">Special Deals</a> | <a href="foodzone.php">Food Zone</a> | <a href="#">Affiliate Program</a> |<br>
+      <div class="bottom_menu"><a href="index.php">Home Page</a> | <a href="aboutus.php">About Us</a> | <a
+          href="specialdeals.php">Special Deals</a> | <a href="foodzone.php">Food Zone</a> | <a href="#">Affiliate
+          Program</a> |<br>
         | <a href="admin/index.php" target="_blank">Administrator</a> |</div>
 
       <div class="bottom_addr">&copy; 2026 All Rights Reserved</div>

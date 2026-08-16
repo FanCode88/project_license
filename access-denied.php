@@ -1,4 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
@@ -26,11 +27,14 @@
       <h1>Access Denied</h1>
       <div style="border:#bd6f2f solid 1px;padding:4px 6px 2px 6px">
         <div class="error">Access Denied!</div>
-        <p>You don't have access to this page. <a href="login-register.php">Click Here</a> to login first or register for free. The registration won't take long:-)</p>
+        <p>You don't have access to this page. <a href="login-register.php">Click Here</a> to login first or register
+          for free. The registration won't take long:-)</p>
       </div>
     </div>
     <div id="footer">
-      <div class="bottom_menu"><a href="index.php">Home Page</a> | <a href="aboutus.php">About Us</a> | <a href="specialdeals.php">Special Deals</a> | <a href="pizzazone.php">Pizza Zone</a> | <a href="#">Affiliate Program</a> |<br>
+      <div class="bottom_menu"><a href="index.php">Home Page</a> | <a href="aboutus.php">About Us</a> | <a
+          href="specialdeals.php">Special Deals</a> | <a href="pizzazone.php">Pizza Zone</a> | <a href="#">Affiliate
+          Program</a> |<br>
         | <a href="admin/index.php" target="_blank">Administrator</a> |</div>
 
       <div class="bottom_addr">&copy; 2026 Saceanu Ionut Sorin. All Rights Reserved</div>
