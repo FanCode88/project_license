@@ -1,4 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
@@ -10,12 +11,12 @@
 <body>
   <div id="page">
     <div id="header">
-      <h1>Access Denied </h1>
+      <h1>Acces interzis</h1>
       <p align="center">&nbsp;</p>
     </div>
-    <h4 align="center" class="err">Access Denied!<br />
-      You do not have access to this resource.</h4>
-    <p align="center"><a href="login-form.php">Click Here</a> to login first.</p>
+    <h4 align="center" class="err">Acces interzis!<br />
+      Nu aveți acces la această resursă.</h4>
+    <p align="center"><a href="login-form.php">Click Aici</a> pentru a vă autentifica mai întâi.</p>
     <div id="footer">
       <div class="bottom_addr">&copy; 2026 Saceanu Ionut Sorin. All Rights Reserved</div>
     </div>

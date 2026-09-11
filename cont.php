@@ -105,7 +105,37 @@ if (isset($_GET['action']) && $_GET['action'] === 'order_again' && isset($_GET['
   exit();
 }
 
-// Istoric Comenzi Finalizate (flag=1)
+// --- CONFIGURARE PAGINARE ---
+$items_per_page = 5;
+$current_page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+if ($current_page < 1) {
+  $current_page = 1;
+}
+
+// 1. Numărare comenzi totale (flag=1)
+$stmt_count_orders = mysqli_prepare($link, "
+    SELECT COUNT(*) AS total_orders
+    FROM orders_details
+    INNER JOIN cart_details ON orders_details.cart_id = cart_details.cart_id
+    WHERE orders_details.member_id = ? AND cart_details.flag = 1
+");
+mysqli_stmt_bind_param($stmt_count_orders, "i", $member_id);
+mysqli_stmt_execute($stmt_count_orders);
+$total_orders_res = mysqli_stmt_get_result($stmt_count_orders);
+$total_orders = mysqli_fetch_assoc($total_orders_res)['total_orders'] ?? 0;
+mysqli_stmt_close($stmt_count_orders);
+
+$total_pages = ceil($total_orders / $items_per_page);
+if ($total_pages > 0 && $current_page > $total_pages) {
+  $current_page = $total_pages;
+}
+
+$offset = ($current_page - 1) * $items_per_page;
+if ($offset < 0) {
+  $offset = 0;
+}
+
+// 2. Istoric Comenzi Finalizate (flag=1) cu LIMIT și OFFSET
 $stmt_orders = mysqli_prepare($link, "
     SELECT orders_details.order_id, food_details.food_name, food_details.food_photo,
            categories.category_name, food_details.food_price, quantities.quantity_value,
@@ -116,8 +146,9 @@ $stmt_orders = mysqli_prepare($link, "
     INNER JOIN categories ON food_details.food_category = categories.category_id
     INNER JOIN quantities ON cart_details.quantity_id = quantities.quantity_id
     WHERE orders_details.member_id = ? AND cart_details.flag = 1
+    LIMIT ? OFFSET ?
 ");
-mysqli_stmt_bind_param($stmt_orders, "i", $member_id);
+mysqli_stmt_bind_param($stmt_orders, "iii", $member_id, $items_per_page, $offset);
 mysqli_stmt_execute($stmt_orders);
 $result = mysqli_stmt_get_result($stmt_orders);
 
@@ -164,6 +195,18 @@ if (!file_exists($qr_dir)) {
   <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
   <link href="assets/css/style.css" rel="stylesheet">
+
+  <style>
+    .pagination .page-link {
+      color: #ffb03b;
+    }
+
+    .pagination .page-item.active .page-link {
+      background-color: #ffb03b;
+      border-color: #ffb03b;
+      color: #fff;
+    }
+  </style>
 </head>
 
 <body>
@@ -181,18 +224,18 @@ if (!file_exists($qr_dir)) {
       </div>
       <nav id="navbar" class="navbar order-last order-lg-0">
         <ul>
-          <li><a class="nav-link scrollto" href="index.php">Home</a></li>
+          <li><a class="nav-link scrollto" href="index.php">Acasă</a></li>
           <li><a class="nav-link scrollto" href="index.php#login">Login</a></li>
-          <li><a class="nav-link scrollto" href="index.php#menu">Our Food</a></li>
-          <li><a class="nav-link scrollto" href="/RM/admin/access-denied.php">Specials</a></li>
-          <li><a class="nav-link scrollto active" href="cont.php">Account</a></li>
-          <li><a class="nav-link scrollto" href="index.php#chefs">Chefs</a></li>
-          <li><a class="nav-link scrollto" href="index.php#gallery">Gallery</a></li>
+          <li><a class="nav-link scrollto" href="index.php#menu">Meniu</a></li>
+          <li><a class="nav-link scrollto" href="/RM/admin/access-denied.php">Specialități</a></li>
+          <li><a class="nav-link scrollto active" href="cont.php">Contul meu</a></li>
+          <li><a class="nav-link scrollto" href="index.php#chefs">Bucătari</a></li>
+          <li><a class="nav-link scrollto" href="index.php#gallery">Galerie</a></li>
           <li><a class="nav-link scrollto" href="contactus.php">Contact</a></li>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav>
-      <a href="logout.php" class="nav-link scrollto text-danger fw-bold" style="padding: 10px 20px;">Logout</a>
+      <a href="logout.php" class="nav-link scrollto text-danger fw-bold" style="padding: 10px 20px;">Deconectare</a>
     </div>
   </header>
 
@@ -212,8 +255,8 @@ if (!file_exists($qr_dir)) {
           <div class="alert alert-light border shadow-sm p-4 mb-4 text-center text-md-start">
             <h1 class="display-6 fw-bold">Welcome, <span
                 class="text-warning"><?php echo htmlspecialchars($_SESSION['SESS_FIRST_NAME'] ?? ''); ?></span>!</h1>
-            <p class="text-muted">Here you can view order history, cancel pending requests, and manage table
-              reservations.</p>
+            <p class="text-muted">Aici puteți vizualiza istoricul comenzilor, puteți anula cererile în așteptare și
+              puteți gestiona rezervările de mese.</p>
           </div>
 
           <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start mb-4">
@@ -236,12 +279,12 @@ if (!file_exists($qr_dir)) {
           </div>
 
           <div class="text-center my-4">
-            <a href="foodzone.php" class="btn btn-success btn-lg px-4 shadow-sm fw-bold">Order More Food!</a>
+            <a href="foodzone.php" class="btn btn-success btn-lg px-4 shadow-sm fw-bold">Comandă mai multă mâncare!</a>
           </div>
 
           <div class="card shadow-sm border-0">
             <div class="card-header bg-dark text-white fw-bold text-center py-3">
-              <i class="bi bi-clock-history"></i> ORDER HISTORY & INVOICES
+              <i class="bi bi-clock-history"></i> ISTORIC COMENZI ȘI FACTURI
             </div>
             <div class="table-responsive">
               <table class="table table-hover table-bordered text-center align-middle mb-0">
@@ -251,16 +294,18 @@ if (!file_exists($qr_dir)) {
                     <th>Photo</th>
                     <th>Food Name</th>
                     <th>Category</th>
-                    <th>Price</th>
                     <th>Qty</th>
-                    <th>Total Cost</th>
                     <th>Delivery Date</th>
                     <th>Action</th>
-                    <th>QR Code</th>
+                    <th>QR Code (Scan for Price)</th>
                   </tr>
                 </thead>
                 <tbody>
                   <?php
+                  if (mysqli_num_rows($result) === 0) {
+                    echo "<tr><td colspan='8' class='py-4 text-muted'>Nu există comenzi în istoric.</td></tr>";
+                  }
+
                   while ($row = mysqli_fetch_assoc($result)) {
                     $order_id = $row['order_id'];
                     $food_name = $row['food_name'];
@@ -272,7 +317,9 @@ if (!file_exists($qr_dir)) {
                     $delivery_date = $row['delivery_date'];
 
                     $photo_encoded = str_replace(' ', '%20', $food_photo);
-                    $string = $food_name . " x" . $quantity_value . " Total: " . $total;
+
+                    // Detaliile despre pret sunt incluse in string-ul codului QR
+                    $string = "Produs: " . $food_name . " | Cantitate: x" . $quantity_value . " | Pret unitar: " . $currency_symbol . number_format($food_price, 2) . " | Cost Total: " . $currency_symbol . number_format($total, 2);
                     $file = "QRimg/qr" . $order_id . ".png";
 
                     if (!empty($string)) {
@@ -284,9 +331,7 @@ if (!file_exists($qr_dir)) {
                     echo "<td><a href='images/" . htmlspecialchars($photo_encoded) . "' target='_blank'><img src='images/" . htmlspecialchars($photo_encoded) . "' class='img-thumbnail' style='width:60px; height:50px; object-fit:cover;'></a></td>";
                     echo "<td class='fw-bold text-start'>" . htmlspecialchars($food_name) . "</td>";
                     echo "<td><span class='badge bg-secondary'>" . htmlspecialchars($category_name) . "</span></td>";
-                    echo "<td class='text-muted'>" . htmlspecialchars($currency_symbol) . number_format($food_price, 2) . "</td>";
                     echo "<td>" . htmlspecialchars($quantity_value) . "</td>";
-                    echo "<td class='text-danger fw-bold'>" . htmlspecialchars($currency_symbol) . number_format($total, 2) . "</td>";
                     echo "<td class='small'>" . htmlspecialchars($delivery_date) . "</td>";
                     echo "<td><a href='cont.php?action=cancel&id=" . htmlspecialchars($order_id) . "' class='btn btn-outline-danger btn-sm' onclick='return confirm(\"Are you sure?\")'>Cancel</a></td>";
                     echo "<td><a href='" . htmlspecialchars($file) . "' target='_blank'><img src='" . htmlspecialchars($file) . "' class='img-thumbnail shadow-sm' style='width:50px; height:50px;'></a></td>";
@@ -299,6 +344,28 @@ if (!file_exists($qr_dir)) {
               </table>
             </div>
           </div>
+
+          <!-- Paginare -->
+          <?php if ($total_pages > 1): ?>
+            <nav aria-label="Orders pagination" class="mt-4">
+              <ul class="pagination justify-content-center">
+                <li class="page-item <?php echo ($current_page <= 1) ? 'disabled' : ''; ?>">
+                  <a class="page-link" href="?page=<?php echo $current_page - 1; ?>">Anterior</a>
+                </li>
+
+                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                  <li class="page-item <?php echo ($i === $current_page) ? 'active' : ''; ?>">
+                    <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                  </li>
+                <?php endfor; ?>
+
+                <li class="page-item <?php echo ($current_page >= $total_pages) ? 'disabled' : ''; ?>">
+                  <a class="page-link" href="?page=<?php echo $current_page + 1; ?>">Următor</a>
+                </li>
+              </ul>
+            </nav>
+          <?php endif; ?>
+
         </div>
       </div>
     </section>

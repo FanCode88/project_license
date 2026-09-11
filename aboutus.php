@@ -12,11 +12,11 @@
   <div id="page">
     <div id="menu">
       <ul>
-        <li><a href="index.php">Home</a></li>
-        <li><a href="foodzone.php">Food Zone</a></li>
-        <li><a href="specialdeals.php">Special Deals</a></li>
-        <li><a href="member-index.php">My Account</a></li>
-        <li><a href="contactus.php">Contact Us</a></li>
+        <li><a href="index.php">Acasă</a></li>
+        <li><a href="foodzone.php">Zona culinară</a></li>
+        <li><a href="specialdeals.php">Oferte speciale</a></li>
+        <li><a href="member-index.php">Contul meu</a></li>
+        <li><a href="contactus.php">Contactează-ne</a></li>
       </ul>
     </div>
     <div id="header">
@@ -25,25 +25,26 @@
     </div>
     <div id="center">
 
-      <h1>ABOUT FOOD PLAZA</h1>
+      <h1>DESPRE FOOD PLAZA</h1>
       <div style="border:#bd6f2f solid 1px;padding:4px 6px 2px 6px">
-        <p>Food Plaza is a multinational restaurant food chain and delivery service with an aim of providing nutritious
-          food to all our current and esteemed customers in Kenya and the world. This is achieved through quality
-          services that surpases customers' satisfaction.</p>
-        <p>Along with our business philosophy, we aim to be a convenient way of delivering food right at your door step
-          with no extra shipping cost incurred. Yes we are here to serve you and to meet your stomach needs.</p>
-        <h3>Mission</h3>
-        <p>To provide affordable, quality, and nutritious food to all our customers and esteemed customers.</p>
-        <h3>Vision</h3>
-        <p>To become the world's most respected brand in delivering quality food to all our customers and esteeemed
-          customers.</p>
+        <p>Food Plaza este un lanț multinațional de restaurante și un serviciu de livrare de mâncare, având ca scop
+          furnizarea de hrană nutritivă tuturor clienților noștri actuali și stimați din Kenya și din întreaga lume.
+          Acest lucru este realizat prin servicii de calitate care depășesc satisfacția clienților.</p>
+        <p>În conformitate cu filosofia noastră de afaceri, ne propunem să fim o modalitate convenabilă de a livra
+          mâncarea direct la ușa dumneavoastră, fără costuri suplimentare de transport. Da, suntem aici pentru a vă
+          servi și pentru a vă satisface toate poftelor.</p>
+        <h3>Misiune</h3>
+        <p>Să oferim mâncare accesibilă, de calitate și nutritivă tuturor clienților și stimaților noștri clienți.</p>
+        <h3>Viziune</h3>
+        <p>Să devenim cel mai respectat brand din lume în livrarea de mâncare de calitate către toți clienții și
+          stimații noștri clienți.</p>
       </div>
     </div>
     <div id="footer">
-      <div class="bottom_menu"><a href="index.php">Home Page</a> | <a href="aboutus.php">About Us</a> | <a
+      <!-- <div class="bottom_menu"><a href="index.php">Home Page</a> | <a href="aboutus.php">About Us</a> | <a
           href="specialdeals.php">Special Deals</a> | <a href="foodzone.php">Food Zone</a> | <a href="#">Affiliate
           Program</a> |<br>
-        | <a href="admin/index.php" target="_blank">Administrator</a> |</div>
+        | <a href="admin/index.php" target="_blank">Administrator</a> |</div> -->
 
       <div class="bottom_addr">&copy; 2026 Saceanu Ionut Sorin. All Rights Reserved</div>
     </div>

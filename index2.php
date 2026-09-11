@@ -211,11 +211,6 @@ $tables = mysql_query("SELECT * FROM tables")
                   <a href="#menu" class="btn-menu animate__animated animate__fadeInUp scrollto">Our Food</a>
                   <a href="#book-a-table" class="btn-book animate__animated animate__fadeInUp scrollto">Book a Table</a>
                 </div>
-
-
-
-
-
                 <hr>
               </div>
             </div>
@@ -305,11 +300,7 @@ $tables = mysql_query("SELECT * FROM tables")
                         </tr>
                         <tr>
                           <td><input name="remember" type="checkbox" class="" id="remember" value="1" onselect="cookie()" <?php if (isset($_COOKIE['remember_me'])) {
-                                                                                                                            echo 'checked="checked"';
-                                                                                                                          } else {
-                                                                                                                            echo '';
-                                                                                                                          }
-                                                                                                                          ?> />Remember me</td>
+                                                                                                                     ?> />Remember me</td>
                           <td><a href="JavaScript: resetPassword()">Forgot password?</a></td>
                         </tr>
                         <tr>

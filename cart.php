@@ -21,7 +21,36 @@ if (!isset($_SESSION['SESS_MEMBER_ID'])) {
 $member_id = (int) $_SESSION['SESS_MEMBER_ID'];
 $flag_0 = 0;
 
-// Interogare securizată coș de cumpărături
+// Configurare Paginare
+$items_per_page = 5;
+$current_page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+if ($current_page < 1) {
+  $current_page = 1;
+}
+
+// 1. Aflăm numărul total de elemente din coș
+$stmt_count = mysqli_prepare($link, "
+    SELECT COUNT(*) AS total_items
+    FROM cart_details
+    WHERE member_id = ? AND flag = ?
+");
+mysqli_stmt_bind_param($stmt_count, "ii", $member_id, $flag_0);
+mysqli_stmt_execute($stmt_count);
+$count_res = mysqli_stmt_get_result($stmt_count);
+$total_rows = mysqli_fetch_assoc($count_res)['total_items'] ?? 0;
+mysqli_stmt_close($stmt_count);
+
+$total_pages = ceil($total_rows / $items_per_page);
+if ($total_pages > 0 && $current_page > $total_pages) {
+  $current_page = $total_pages;
+}
+
+$offset = ($current_page - 1) * $items_per_page;
+if ($offset < 0) {
+  $offset = 0;
+}
+
+// 2. Interogare securizată coș de cumpărături cu LIMIT și OFFSET
 $stmt_cart = mysqli_prepare($link, "
     SELECT food_details.food_name, food_details.food_description, food_details.food_price,
            food_details.food_photo, cart_details.cart_id, cart_details.quantity_id,
@@ -30,8 +59,9 @@ $stmt_cart = mysqli_prepare($link, "
     INNER JOIN food_details ON cart_details.food_id = food_details.food_id
     INNER JOIN categories ON food_details.food_category = categories.category_id
     WHERE cart_details.member_id = ? AND cart_details.flag = ?
+    LIMIT ? OFFSET ?
 ");
-mysqli_stmt_bind_param($stmt_cart, "ii", $member_id, $flag_0);
+mysqli_stmt_bind_param($stmt_cart, "iiii", $member_id, $flag_0, $items_per_page, $offset);
 mysqli_stmt_execute($stmt_cart);
 $result = mysqli_stmt_get_result($stmt_cart);
 
@@ -100,6 +130,16 @@ if (!file_exists($qr_dir)) {
       transition: 0.3s;
       white-space: nowrap;
     }
+
+    .pagination .page-link {
+      color: #ffb03b;
+    }
+
+    .pagination .page-item.active .page-link {
+      background-color: #ffb03b;
+      border-color: #ffb03b;
+      color: #fff;
+    }
   </style>
 </head>
 
@@ -155,18 +195,16 @@ if (!file_exists($qr_dir)) {
                 <th>Item ID</th>
                 <th>Photo</th>
                 <th>Name</th>
-                <th>Ingredients</th>
+                <th>QR (Ingrediente & Pret)</th>
                 <th>Category</th>
-                <th>Price</th>
                 <th style="min-width: 140px;">Quantity</th>
-                <th>Total Cost</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
               <?php
               if (mysqli_num_rows($result) === 0) {
-                echo "<tr><td colspan='9' class='py-4 text-muted'>Your shopping cart is empty. <a href='foodzone.php' class='text-warning fw-bold'>Order food now!</a></td></tr>";
+                echo "<tr><td colspan='7' class='py-4 text-muted'>Your shopping cart is empty. <a href='foodzone.php' class='text-warning fw-bold'>Order food now!</a></td></tr>";
               }
 
               while ($row = mysqli_fetch_assoc($result)) {
@@ -182,17 +220,20 @@ if (!file_exists($qr_dir)) {
                 $photo_encoded = str_replace(' ', '%20', $food_photo);
                 $filename = $qr_dir . 'qr_' . $cart_id . '.png';
 
-                if (!empty($food_description)) {
-                  QRcode::png($food_description, $filename, QR_ECLEVEL_L, 4);
-                }
+                // Datele incluse in QR: Ingrediente + Pret unitar + Cost Total
+                $qr_content = "Produs: " . $food_name . "\n" .
+                  "Ingrediente: " . $food_description . "\n" .
+                  "Pret unitar: " . $currency_symbol . number_format($food_price, 2) . "\n" .
+                  "Total: " . $currency_symbol . number_format($total, 2);
+
+                QRcode::png($qr_content, $filename, QR_ECLEVEL_L, 4);
 
                 echo "<tr>";
                 echo "<td class='fw-bold'>#" . htmlspecialchars($cart_id) . "</td>";
                 echo "<td><a href='images/" . htmlspecialchars($photo_encoded) . "' target='_blank'><img src='images/" . htmlspecialchars($photo_encoded) . "' class='img-thumbnail shadow-sm' style='max-width: 80px; height: 60px; object-fit: cover;'></a></td>";
                 echo "<td class='fw-bold text-start'>" . htmlspecialchars($food_name) . "</td>";
-                echo "<td class='text-center'><img src='" . htmlspecialchars($filename) . "' class='img-thumbnail shadow-sm' style='max-width:80px; cursor:pointer' alt='QR Code' data-bs-toggle='modal' data-bs-target='#qrModal' data-qr-src='" . htmlspecialchars($filename) . "' data-food-name='" . htmlspecialchars($food_name) . "' data-ingredients='" . htmlspecialchars($food_description) . "'><div class='mt-1'><small class='text-success fw-semibold'>View Ingredients</small></div></td>";
+                echo "<td class='text-center'><img src='" . htmlspecialchars($filename) . "' class='img-thumbnail shadow-sm' style='max-width:80px; cursor:pointer' alt='QR Code' data-bs-toggle='modal' data-bs-target='#qrModal' data-qr-src='" . htmlspecialchars($filename) . "' data-food-name='" . htmlspecialchars($food_name) . "' data-ingredients='" . htmlspecialchars($food_description) . "'><div class='mt-1'><small class='text-success fw-semibold'>Scan for Price & Info</small></div></td>";
                 echo "<td><span class='badge bg-secondary'>" . htmlspecialchars($category_name) . "</span></td>";
-                echo "<td class='text-success fw-bold'>" . htmlspecialchars($currency_symbol) . number_format($food_price, 2) . "</td>";
 
                 // Formular modificare cantitate
                 echo "<td>";
@@ -206,7 +247,6 @@ if (!file_exists($qr_dir)) {
                 echo "  </form>";
                 echo "</td>";
 
-                echo "<td class='text-danger fw-bold'>" . htmlspecialchars($currency_symbol) . number_format($total, 2) . "</td>";
                 echo "<td>";
                 echo "  <div class='d-flex gap-2 justify-content-center'>";
                 echo "    <a href='order-exec.php?id=" . htmlspecialchars($cart_id) . "' class='btn btn-success btn-sm px-3 shadow-sm'>Place Order</a>";
@@ -221,6 +261,28 @@ if (!file_exists($qr_dir)) {
             </tbody>
           </table>
         </div>
+
+        <!-- Bară de paginare -->
+        <?php if ($total_pages > 1): ?>
+          <nav aria-label="Cart pagination" class="mt-4">
+            <ul class="pagination justify-content-center">
+              <li class="page-item <?php echo ($current_page <= 1) ? 'disabled' : ''; ?>">
+                <a class="page-link" href="?page=<?php echo $current_page - 1; ?>">Anterior</a>
+              </li>
+
+              <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                <li class="page-item <?php echo ($i === $current_page) ? 'active' : ''; ?>">
+                  <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                </li>
+              <?php endfor; ?>
+
+              <li class="page-item <?php echo ($current_page >= $total_pages) ? 'disabled' : ''; ?>">
+                <a class="page-link" href="?page=<?php echo $current_page + 1; ?>">Următor</a>
+              </li>
+            </ul>
+          </nav>
+        <?php endif; ?>
+
       </div>
     </section>
   </main>
@@ -230,14 +292,14 @@ if (!file_exists($qr_dir)) {
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title fw-bold text-uppercase" style="color: #ffb03b;">Ingrediente</h5>
+          <h5 class="modal-title fw-bold text-uppercase" style="color: #ffb03b;">Detalii Cod QR</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body text-center">
           <h4 id="modalFoodName" class="fw-bold mb-3"></h4>
           <img id="modalQrImg" src="" class="img-fluid shadow rounded mb-3" style="max-width: 200px;" alt="QR Code">
           <div class="p-3 bg-light rounded text-start border">
-            <h6 class="fw-bold"><i class="bi bi-card-text text-warning"></i> Detalii:</h6>
+            <h6 class="fw-bold"><i class="bi bi-card-text text-warning"></i> Ingrediente:</h6>
             <p id="modalIngredients" class="text-muted small mb-0"></p>
           </div>
         </div>

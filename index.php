@@ -159,22 +159,22 @@ try {
 
       <nav id="navbar" class="navbar order-last order-lg-0">
         <ul>
-          <li><a class="nav-link scrollto active" href="index.php">Home</a></li>
-          <li><a class="nav-link scrollto" href="#menu">Our Food</a></li>
-          <li><a class="nav-link" href="admin/specials.php">Specials</a></li>
+          <li><a class="nav-link scrollto active" href="index.php">Acasă</a></li>
+          <li><a class="nav-link scrollto" href="#menu">Meniu</a></li>
+          <li><a class="nav-link" href="admin/specials.php">Specialități</a></li>
 
           <?php if (isset($_SESSION['SESS_MEMBER_ID'])): ?>
             <!-- Link-uri vizibile doar cand ESTI logat -->
-            <li><a class="nav-link scrollto" href="cont.php">Client Account</a></li>
+            <li><a class="nav-link scrollto" href="cont.php">Cont client</a></li>
           <?php else: ?>
             <!-- Link-uri vizibile doar cand NU esti logat -->
             <li><a class="nav-link scrollto" href="#login">Login</a></li>
           <?php endif; ?>
 
-          <li><a class="nav-link scrollto" href="admin/index.php" target="_blank">Admin</a></li>
-          <li><a class="nav-link scrollto" href="index.php#chefs">Chefs</a></li>
-          <li><a class="nav-link scrollto" href="index.php#gallery">Gallery</a></li>
-          <li><a class="nav-link scrollto" href="contactus.php">Contact</a></li>
+          <li><a class="nav-link scrollto" href="admin/index.php" target="_blank">Administrator</a></li>
+          <li><a class="nav-link scrollto" href="index.php#chefs">Bucătari</a></li>
+          <li><a class="nav-link scrollto" href="index.php#gallery">Galerie foto</a></li>
+          <li><a class="nav-link scrollto" href="contactus.php">Contactează-ne</a></li>
 
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
@@ -182,7 +182,7 @@ try {
 
       <!-- Butonul din dreapta sus -->
       <?php if (isset($_SESSION['SESS_MEMBER_ID'])): ?>
-        <a href="logout.php" class="book-a-table-btn-home scrollto">Logout</a>
+        <a href="logout.php" class="book-a-table-btn-home scrollto">Deconectare</a>
       <?php else: ?>
         <a href="#login" class="book-a-table-btn scrollto">Login</a>
       <?php endif; ?>
@@ -206,8 +206,9 @@ try {
                   Deluxe! Comandă-ți astăzi mâncarea de la Deluxe și îți va fi livrată direct la ușă. Profită de
                   ofertele noastre speciale săptămânale din meniul „Oferte Speciale” (Special Deals).</p>
                 <div>
-                  <a href="#menu" class="btn-menu animate__animated animate__fadeInUp scrollto">Our Food</a>
-                  <a href="#book-a-table" class="btn-book animate__animated animate__fadeInUp scrollto">Book a Table</a>
+                  <a href="#menu" class="btn-menu animate__animated animate__fadeInUp scrollto">Mâncarea noastră</a>
+                  <a href="#book-a-table" class="btn-book animate__animated animate__fadeInUp scrollto">Rezervă o
+                    masă</a>
                 </div>
                 <hr>
               </div>
@@ -262,9 +263,7 @@ try {
     <!-- ======= Login & Register Section ======= -->
     <section id="login" class="about">
       <div class="container" data-aos="fade-up">
-
         <div class="row g-4">
-
           <!-- Coloana Stângă: Video / Imagine de fundal -->
           <div class="col-lg-6 video-box" style="background-image: url('assets/img/about.jpg');">
             <a href="https://www.youtube.com/watch?v=ZVhgcKr3lMU" class="venobox play-btn mb-4" data-vbtype="video"
@@ -274,12 +273,13 @@ try {
           <!-- Coloana Dreaptă: Panoul de Formulare (cu Tab-uri) -->
           <div class="col-lg-6 d-flex flex-column justify-content-center">
             <div class="form-container-box">
-
               <!-- Navigație între Login și Register -->
               <ul class="nav nav-pills custom-tabs mb-4 justify-content-center" id="authTabs" role="tablist">
                 <li class="nav-item" role="presentation">
                   <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login-panel"
-                    type="button" role="tab" aria-controls="login-panel" aria-selected="true">Autentificare</button>
+                    type="button" role="tab" aria-controls="login-panel" aria-selected="true">
+                    <?php echo isset($_SESSION['SESS_MEMBER_ID']) ? 'Contul Meu' : 'Autentificare'; ?>
+                  </button>
                 </li>
                 <li class="nav-item" role="presentation">
                   <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register-panel"
@@ -290,29 +290,41 @@ try {
               <!-- Conținutul Tab-urilor -->
               <div class="tab-content" id="authTabsContent">
 
-                <!-- Panel Login -->
+                <!-- Panel Login / Profil -->
                 <div class="tab-pane fade show active" id="login-panel" role="tabpanel" aria-labelledby="login-tab">
-                  <form id="loginForm" class="mx-auto p-4 bg-white rounded-3 shadow" style="max-width: 400px;">
-                    <div class="mb-3">
-                      <label for="login_email" class="form-label fw-bold">Email <span
-                          class="text-danger">*</span></label>
-                      <input name="login" type="text" id="login_email"
-                        class="form-control form-control-lg border-secondary shadow-sm"
-                        placeholder="introdu email-ul..." required />
+                  <?php if (isset($_SESSION['SESS_MEMBER_ID'])): ?>
+                    <!-- Afișează dacă este logat în loc de formularul de login -->
+                    <div class="p-4 bg-white rounded-3 shadow text-center mx-auto" style="max-width: 400px;">
+                      <h3>Bine ai revenit, <?php echo htmlspecialchars($_SESSION['SESS_FIRST_NAME'] ?? 'Utilizator'); ?>!
+                      </h3>
+                      <div class="d-flex justify-content-center gap-2 mt-4">
+                        <a href="member-profile.php" class="btn btn-outline-primary px-3">Vezi Profilul</a>
+                      </div>
                     </div>
+                  <?php else: ?>
+                    <!-- Formularul de Login (dacă NU este logat) -->
+                    <form id="loginForm" class="mx-auto p-4 bg-white rounded-3 shadow" style="max-width: 400px;">
+                      <div class="mb-3">
+                        <label for="login_email" class="form-label fw-bold">Email <span
+                            class="text-danger">*</span></label>
+                        <input name="login" type="text" id="login_email"
+                          class="form-control form-control-lg border-secondary shadow-sm"
+                          placeholder="introdu email-ul..." required />
+                      </div>
 
-                    <div class="mb-3">
-                      <label for="password" class="form-label fw-bold">Parolă <span class="text-danger">*</span></label>
-                      <input name="password" type="password" id="password"
-                        class="form-control form-control-lg border-secondary shadow-sm" placeholder="introdu parola..."
-                        required />
-                    </div>
+                      <div class="mb-3">
+                        <label for="password" class="form-label fw-bold">Parolă <span class="text-danger">*</span></label>
+                        <input name="password" type="password" id="password"
+                          class="form-control form-control-lg border-secondary shadow-sm" placeholder="introdu parola..."
+                          required />
+                      </div>
 
-                    <button type="submit" class="book-a-table-btn w-100 mt-3 border-0 shadow">Conectare</button>
-                  </form>
+                      <button type="submit" class="book-a-table-btn w-100 mt-3 border-0 shadow">Conectare</button>
+                    </form>
+                  <?php endif; ?>
                 </div>
 
-                <!-- Panel Înregistrare -->
+                <!-- Panel Înregistrare (Rămâne MEREU vizibil) -->
                 <div class="tab-pane fade" id="register-panel" role="tabpanel" aria-labelledby="register-tab">
                   <form id="registerForm" name="registerForm" method="post" action="register-exec.php"
                     onsubmit="return registerValidate(this)" class="p-4 bg-white rounded-3 shadow">
@@ -385,7 +397,6 @@ try {
           </div>
 
         </div>
-
       </div>
     </section>
 
@@ -621,7 +632,9 @@ try {
               <label><b>Timp:</b></label>
               <input type="time" name="time" id="time" required />
             </div>
-            <button type="submit" class="book-a-table-btn w-100">Rezervă acum</button>
+            <button type="submit"
+              class="book-a-table-btn px-5 py-2 w-100 border-0 text-white fw-bold bg-secondary fs-6">Rezervă
+              acum</button>
           </form>
         </div>
       </div>

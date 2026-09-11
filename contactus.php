@@ -12,11 +12,11 @@
   <div id="page">
     <div id="menu">
       <ul>
-        <li><a href="index.php">Home</a></li>
-        <li><a href="foodzone.php">Food Zone</a></li>
-        <li><a href="specialdeals.php">Special Deals</a></li>
-        <li><a href="member-index.php">My Account</a></li>
-        <li><a href="contactus.php">Contact Us</a></li>
+        <li><a href="index.php">Acasă</a></li>
+        <li><a href="foodzone.php">Zona culinară</a></li>
+        <li><a href="specialdeals.php">Oferte speciale</a></li>
+        <li><a href="member-index.php">Contul meu</a></li>
+        <li><a href="contactus.php">Contactează-ne</a></li>
       </ul>
     </div>
     <div id="header">
