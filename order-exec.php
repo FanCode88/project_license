@@ -29,11 +29,17 @@ if ($id <= 0) {
 }
 
 try {
-    // 1. Preluare billing_id dacă există (dacă nu există, setăm NULL)
+    // 1. Preluare billing_id (se verifică dacă adresa există)
     $stmt_billing = $pdo->prepare("SELECT billing_id FROM billing_details WHERE member_id = :member_id LIMIT 1");
     $stmt_billing->execute(['member_id' => $member_id]);
     $billing_row = $stmt_billing->fetch(PDO::FETCH_ASSOC);
-    $billing_id = $billing_row ? $billing_row['billing_id'] : null;
+
+    if (!$billing_row || empty($billing_row['billing_id'])) {
+        header("Location: cont.php?error=" . urlencode("Vă rugăm să vă completați datele de livrare/facturare înainte de plasarea comenzii."));
+        exit();
+    }
+
+    $billing_id = (int) $billing_row['billing_id'];
 
     // 2. Setare fus orar
     $flag_1 = 1;
@@ -46,7 +52,7 @@ try {
     }
 
     $time_stamp = date("H:i:s");
-    $delivery_date = date("Y-m-d H:i:s"); // Formatat complet cu dată și oră
+    $delivery_date = date("Y-m-d H:i:s");
 
     // 3. Începe tranzacția SQL
     $pdo->beginTransaction();
@@ -62,7 +68,7 @@ try {
         throw new Exception("Produsul nu există în coș sau a fost deja comandat.");
     }
 
-    // 4. Inserare în orders_details (flag = 1 specifică o comandă activată)
+    // 4. Inserare în orders_details
     $qry_create = "INSERT INTO orders_details (member_id, billing_id, cart_id, delivery_date, flag, time_stamp, StaffID)
                    VALUES (:member_id, :billing_id, :id, :delivery_date, 1, :time_stamp, NULL)";
     $stmt_insert = $pdo->prepare($qry_create);
@@ -74,7 +80,7 @@ try {
         'time_stamp' => $time_stamp
     ]);
 
-    // 5. Actualizare status în cart_details (flag = 1 scoate produsul din coș și îl marchează ca comandat)
+    // 5. Actualizare status în cart_details
     $qry_update = "UPDATE cart_details SET flag = 1 WHERE cart_id = :id AND member_id = :member_id";
     $stmt_update = $pdo->prepare($qry_update);
     $stmt_update->execute([
@@ -85,7 +91,6 @@ try {
     // Commit tranzacție
     $pdo->commit();
 
-    // Redirecționare în contul clientului
     header("Location: cont.php?success=1");
     exit();
 

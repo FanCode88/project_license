@@ -167,7 +167,7 @@ session_destroy();
   <!-- Footer -->
   <footer class="footer text-center">
     <div class="container">
-      <div class="mb-2 d-flex flex-wrap justify-content-center gap-2">
+      <!-- <div class="mb-2 d-flex flex-wrap justify-content-center gap-2">
         <a href="index.php">Home Page</a>
         <span>•</span>
         <a href="aboutus.php">About Us</a>
@@ -177,7 +177,7 @@ session_destroy();
         <a href="foodzone.php">Food Zone</a>
         <span>•</span>
         <a href="admin/index.php" target="_blank" class="text-warning">Administrator</a>
-      </div>
+      </div> -->
       <p class="mb-0 text-muted small">&copy; <?php echo date("Y"); ?> Saceanu Ionut Sorin. All Rights Reserved</p>
     </div>
   </footer>

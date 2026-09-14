@@ -63,11 +63,16 @@ $categories = mysqli_query($link, "SELECT * FROM categories")
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Food Plaza: Foods</title>
+
   <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font & Iconițe -->
-  <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,600,700" rel="stylesheet">
+
+  <!-- Google Fonts: Poppins & Satisfy -->
+  <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,600,700|Satisfy" rel="stylesheet">
+
+  <!-- Iconițe Bootstrap -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
   <style>
     body {
       font-family: 'Poppins', sans-serif;
@@ -135,22 +140,6 @@ $categories = mysqli_query($link, "SELECT * FROM categories")
       color: white;
     }
 
-    .footer {
-      background-color: #222;
-      color: #aaa;
-      padding: 40px 0 20px 0;
-      margin-top: 60px;
-    }
-
-    .footer a {
-      color: #eee;
-      text-decoration: none;
-    }
-
-    .footer a:hover {
-      color: #bd6f2f;
-    }
-
     .ingredient-qr {
       text-align: center;
     }
@@ -205,6 +194,102 @@ $categories = mysqli_query($link, "SELECT * FROM categories")
       font-size: 14px;
       letter-spacing: 0.3px;
     }
+
+    /* ===== STILIZARE DEDICATĂ FOOTER-ULUI ===== */
+    #footer {
+      background: #35322d;
+      color: #fff;
+      font-size: 14px;
+      text-align: center;
+      padding: 50px 0 30px 0;
+      margin-top: 60px;
+      position: relative;
+      width: 100%;
+    }
+
+    #footer h3 {
+      font-size: 38px;
+      font-weight: 700;
+      color: #ffb03b;
+      position: relative;
+      font-family: "Satisfy", cursive;
+      padding: 0;
+      margin: 0 0 15px 0;
+    }
+
+    #footer p {
+      font-size: 15px;
+      font-style: italic;
+      padding: 0;
+      margin: 0 0 30px 0;
+      color: #c4b9a9;
+    }
+
+    #footer .footer-divider {
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      margin: 0 auto 20px auto;
+      max-width: 900px;
+    }
+
+    #footer .copyright {
+      font-size: 13px;
+      color: #a49a8a;
+      margin-bottom: 6px;
+    }
+
+    #footer .copyright strong {
+      color: #fff;
+    }
+
+    #footer .credits {
+      font-size: 13px;
+      color: #a49a8a;
+    }
+
+    #footer .credits a {
+      color: #ffb03b;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    #footer .credits a:hover {
+      text-decoration: underline;
+    }
+
+    /* Buton Back to Top */
+    .back-to-top {
+      position: fixed;
+      visibility: hidden;
+      opacity: 0;
+      right: 20px;
+      bottom: 20px;
+      z-index: 996;
+      background: #ffb03b;
+      width: 44px;
+      height: 44px;
+      border-radius: 50px;
+      transition: all 0.4s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    .back-to-top i {
+      font-size: 22px;
+      color: #fff;
+      line-height: 0;
+    }
+
+    .back-to-top:hover {
+      background: #ffa012;
+      color: #fff;
+    }
+
+    .back-to-top.active {
+      visibility: visible;
+      opacity: 1;
+    }
   </style>
 </head>
 
@@ -214,8 +299,7 @@ $categories = mysqli_query($link, "SELECT * FROM categories")
   <nav class="navbar navbar-expand-lg navbar-light sticky-top">
     <div class="container">
       <a class="navbar-brand" href="index.php"><i class="bi bi-egg-fried"></i> Food Plaza</a>
-      <button class="navbar-collapse-toggler navbar-toggler" type="button" data-bs-toggle="collapse"
-        data-bs-target="#navbarNav">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
@@ -341,22 +425,47 @@ $categories = mysqli_query($link, "SELECT * FROM categories")
   mysqli_close($link);
   ?>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container text-center">
-      <div class="mb-3">
-        <a href="index.php" class="mx-2">Acasă</a> |
-        <a href="aboutus.php" class="mx-2">Despre noi</a> |
-        <a href="specialdeals.php" class="mx-2">Oferte speciale</a> |
-        <a href="foodzone.php" class="mx-2">Zona culinară</a> |
-        <a href="admin/index.php" target="_blank" class="mx-2 text-warning">Administrator</a>
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+    <div class="container">
+      <h3>Deluxe Restaurant</h3>
+      <p>Best premium multicuisine Restaurant in Craiova, Romania. Flavour from around the world straight to your table.
+      </p>
+      <div class="footer-divider"></div>
+      <div class="copyright">
+        &copy; Copyright <strong>Deluxe</strong>. 2026 Saceanu Ionut Sorin All Rights Reserved
       </div>
-      <p class="small mb-0 text-muted">&copy; 2026 Saceanu Ionut Sorin. All Rights Reserved</p>
+      <div class="credits">
+        Designed by <a href="#">Saceanu Ionut Sorin</a>
+      </div>
     </div>
   </footer>
 
+  <!-- ======= Back to Top ======= -->
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center">
+    <i class="bi bi-arrow-up-short"></i>
+  </a>
+
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Script activare Back to Top -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      let backtotop = document.querySelector('.back-to-top');
+      if (backtotop) {
+        const toggleBacktotop = () => {
+          if (window.scrollY > 100) {
+            backtotop.classList.add('active');
+          } else {
+            backtotop.classList.remove('active');
+          }
+        };
+        window.addEventListener('load', toggleBacktotop);
+        window.addEventListener('scroll', toggleBacktotop);
+      }
+    });
+  </script>
 </body>
 
 </html>

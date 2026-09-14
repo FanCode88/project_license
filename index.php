@@ -294,7 +294,7 @@ try {
                 <div class="tab-pane fade show active" id="login-panel" role="tabpanel" aria-labelledby="login-tab">
                   <?php if (isset($_SESSION['SESS_MEMBER_ID'])): ?>
                     <!-- Afișează dacă este logat în loc de formularul de login -->
-                    <div class="p-4 bg-white rounded-3 shadow text-center mx-auto" style="max-width: 400px;">
+                    <div class="p-4 bg-white rounded-3 shadow text-center mx-auto" style="max-width: 450px;">
                       <h3>Bine ai revenit, <?php echo htmlspecialchars($_SESSION['SESS_FIRST_NAME'] ?? 'Utilizator'); ?>!
                       </h3>
                       <div class="d-flex justify-content-center gap-2 mt-4">
@@ -303,7 +303,7 @@ try {
                     </div>
                   <?php else: ?>
                     <!-- Formularul de Login (dacă NU este logat) -->
-                    <form id="loginForm" class="mx-auto p-4 bg-white rounded-3 shadow" style="max-width: 400px;">
+                    <form id="loginForm" class="mx-auto p-4 bg-white rounded-3 shadow" style="max-width: 450px;">
                       <div class="mb-3">
                         <label for="login_email" class="form-label fw-bold">Email <span
                             class="text-danger">*</span></label>
@@ -319,15 +319,17 @@ try {
                           required />
                       </div>
 
-                      <button type="submit" class="book-a-table-btn w-100 mt-3 border-0 shadow">Conectare</button>
+                      <button type="submit" class="book-a-table-btn w-100 mt-3 border-0 shadow"
+                        style="display: block; width: 100% !important;">Conectare</button>
                     </form>
                   <?php endif; ?>
                 </div>
 
-                <!-- Panel Înregistrare (Rămâne MEREU vizibil) -->
+                <!-- Panel Înregistrare -->
                 <div class="tab-pane fade" id="register-panel" role="tabpanel" aria-labelledby="register-tab">
                   <form id="registerForm" name="registerForm" method="post" action="register-exec.php"
-                    onsubmit="return registerValidate(this)" class="p-4 bg-white rounded-3 shadow">
+                    onsubmit="return registerValidate(this)" class="p-4 bg-white rounded-3 shadow mx-auto"
+                    style="max-width: 450px;">
 
                     <div class="row g-2 mb-3">
                       <div class="col-md-6">
@@ -387,7 +389,11 @@ try {
                         placeholder="Răspunsul tău secret..." required />
                     </div>
 
-                    <button type="submit" class="book-a-table-btn w-100 mt-2 border-0 shadow">Creează Cont</button>
+                    <button type="submit" class="book-a-table-btn w-100 mt-3 border-0 shadow"
+                      style="display: block; width: 100% !important; padding: 15px 25px; font-size: 16px;">
+                      Creează Cont
+                    </button>
+
                   </form>
                 </div>
 

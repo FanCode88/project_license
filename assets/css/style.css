@@ -146,22 +146,6 @@ h6 {
 /*--------------------------------------------------------------
 # Book a table button Menu
 --------------------------------------------------------------*/
-.book-a-table-btn {
-  /* background: #ffb03b; */
-  color: #fff;
-  border-radius: 50px;
-  /* padding: 10px 25px; */
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 1px;
-  transition: 0.3s;
-  white-space: nowrap;
-}
-
-.book-a-table-btn:hover {
-  background: #ffa012;
-  color: #fff;
-}
 
 .book-a-table-btn-home {
   background: #ffb03b;

@@ -3,7 +3,7 @@ require_once('auth.php');
 require_once('qrlib.php');
 require_once('connection/config.php');
 
-// Conectare MySQL folosind PDO (înlocuirea funcțiilor deprecate mysql_*)
+// Conectare MySQL folosind PDO
 try {
   $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_DATABASE . ";charset=utf8mb4", DB_USER, DB_PASSWORD);
   $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -13,7 +13,7 @@ try {
 
 $memberId = $_SESSION['SESS_MEMBER_ID'];
 
-// Istoric comenzi (folosind Prepared Statements)
+// Istoric comenzi
 $stmt = $pdo->prepare("SELECT * FROM orders_details, cart_details, food_details, categories, quantities, members
                        WHERE members.member_id = :memberId1
                        AND orders_details.member_id = :memberId2
@@ -248,19 +248,24 @@ $reservations = $stmt_res->fetchAll(PDO::FETCH_ASSOC);
       </div>
       <!-- ===== SFÂRȘIT MAIN-CARD ===== -->
 
-      <!-- Footer -->
-      <div class="footer-custom">
-        <h3>Deluxe Restaurant</h3>
-        <p>Cel mai bun restaurant multicuisine premium din Craiova, România. Aducem la masă arome din întreaga lume.</p>
-        <div class="copyright">
-          &copy; Copyright <strong>Deluxe</strong>. 2026 Toate drepturile rezervate.
-        </div>
-        <div class="credits" style="font-size:0.8rem; color:#aaa;">
-          Designed by <a href="#" style="color:#ff7a18; text-decoration:none;">Saceanu Ionut Sorin</a>
-        </div>
-      </div>
     </div>
   </main>
+
+  <!-- ======= Footer-ul identic cu imaginea ======= -->
+  <footer id="footer">
+    <div class="container">
+      <h3>Deluxe Restaurant</h3>
+      <p>Best premium multicuisine Restaurant in Craiova, Romania. Flavour from around the world straight to your table.
+      </p>
+      <div class="footer-divider"></div>
+      <div class="copyright">
+        &copy; Copyright <strong>Deluxe</strong>. 2026 Saceanu Ionut Sorin All Rights Reserved
+      </div>
+      <div class="credits">
+        Designed by <a href="#">Saceanu Ionut Sorin</a>
+      </div>
+    </div>
+  </footer>
 
   <!-- ======= Back to Top ======= -->
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center">
@@ -273,6 +278,24 @@ $reservations = $stmt_res->fetchAll(PDO::FETCH_ASSOC);
   <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
   <script src="assets/js/main.js"></script>
+
+  <!-- Script activare Back to Top -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      let backtotop = document.querySelector('.back-to-top');
+      if (backtotop) {
+        const toggleBacktotop = () => {
+          if (window.scrollY > 100) {
+            backtotop.classList.add('active');
+          } else {
+            backtotop.classList.remove('active');
+          }
+        };
+        window.addEventListener('load', toggleBacktotop);
+        window.addEventListener('scroll', toggleBacktotop);
+      }
+    });
+  </script>
 </body>
 
 </html>

@@ -42,74 +42,94 @@ $num_messages = mysqli_num_rows($messages_result);
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>Restaurant: Tables</title>
+  <title>Restaurant: Messages</title>
   <link href="stylesheets/user_styles.css" rel="stylesheet" type="text/css" />
   <script language="JavaScript" src="validation/user.js"></script>
 </head>
 
 <body>
-  <div id="page">
-    <div id="menu">
-      <ul>
-        <li><a href="index.php">Home</a></li>
-        <li><a href="foodzone.php">Food Zone</a></li>
-        <li><a href="specialdeals.php">Special Deals</a></li>
-        <li><a href="member-index.php">My Account</a></li>
-        <li><a href="contactus.php">Contact Us</a></li>
-      </ul>
-    </div>
-    <div id="header">
-      <div id="logo"> <a href="index.php" class="blockLink"></a></div>
-      <div id="company_name">Albita Restaurant</div>
-    </div>
-    <div id="center">
-      <h1>MESSAGES</h1>
-      <div style="border:#bd6f2f solid 1px;padding:4px 6px 2px 6px">
-        <a href="member-index.php">Home</a> | <a href="cart.php">Cart[
-          <?php echo $num_items; ?>]
-        </a> | <a href="inbox.php">Inbox[
-          <?php echo $num_messages; ?>]
-        </a> | <a href="tables.php">Tables</a> | <a href="partyhalls.php">Party-Halls</a> | <a href="ratings.php">Rate
-          Us</a> | <a href="logout.php">Logout</a>
-        <p>&nbsp;</p>
-        <p>Here you can ... For more information <a href="contactus.php">Click Here</a> to contact us.</p>
-        <hr>
-        <table width="850" style="text-align:center;">
-          <CAPTION>
-            <h2>INBOX</h2>
-          </CAPTION>
-          <tr>
-            <th>From</th>
-            <th>Date Received</th>
-            <th>Time Received</th>
-            <th>Subject</th>
-            <th>Text</th>
-          </tr>
-
-          <?php
-          //Loop through all table rows safely using htmlspecialchars to prevent XSS
-          while ($row = mysqli_fetch_assoc($messages_result)) {
-            echo "<tr>";
-            echo "<td>" . htmlspecialchars($row['message_from']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['message_date']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['message_time']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['message_subject']) . "</td>";
-            echo "<td width='350' align='left'>" . htmlspecialchars($row['message_text']) . "</td>";
-            echo "</tr>";
-          }
-          mysqli_free_result($messages_result);
-          mysqli_close($link);
-          ?>
-        </table>
+  <div id="wrap">
+    <div id="page">
+      <div id="menu">
+        <ul>
+          <li><a href="index.php">Home</a></li>
+          <li><a href="foodzone.php">Food Zone</a></li>
+          <li><a href="specialdeals.php">Special Deals</a></li>
+          <li><a href="member-index.php">My Account</a></li>
+          <li><a href="contactus.php">Contact Us</a></li>
+        </ul>
       </div>
-    </div>
-    <div id="footer">
-      <div class="bottom_menu"><a href="index.php">Home Page</a> | <a href="aboutus.php">About Us</a> | <a
-          href="specialdeals.php">Special Deals</a> | <a href="foodzone.php">Food Zone</a> | <a href="#">Affiliate
-          Program</a> |<br>
-        | <a href="admin/index.php" target="_blank">Administrator</a> |</div>
+      <div id="header">
+        <div id="logo"><a href="index.php" class="blockLink"></a></div>
+        <div id="company_name">Albita Restaurant</div>
+      </div>
 
-      <div class="bottom_addr">&copy; 2026 Saceanu Ionut Sorin. All Rights Reserved</div>
+      <div id="center">
+        <h1>MESSAGES</h1>
+
+        <!-- Navigation Bar for Member -->
+        <div class="member-nav-bar">
+          <a href="member-index.php">Home</a>
+          <span class="nav-separator">|</span>
+          <a href="cart.php">Cart [<?php echo $num_items; ?>]</a>
+          <span class="nav-separator">|</span>
+          <a href="inbox.php" class="active">Inbox [<?php echo $num_messages; ?>]</a>
+          <span class="nav-separator">|</span>
+          <a href="tables.php">Tables</a>
+          <span class="nav-separator">|</span>
+          <a href="partyhalls.php">Party-Halls</a>
+          <span class="nav-separator">|</span>
+          <a href="ratings.php">Rate Us</a>
+          <span class="nav-separator">|</span>
+          <a href="logout.php">Logout</a>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="messages-container">
+          <div class="info-notice">
+            <p>Here you can view your incoming messages. For more information, <a href="contactus.php">Click Here</a> to
+              contact us.</p>
+          </div>
+
+          <h2 style="margin-bottom: 15px;">INBOX</h2>
+
+          <table class="messages-table">
+            <thead>
+              <tr>
+                <th width="15%">From</th>
+                <th width="12%">Date</th>
+                <th width="10%">Time</th>
+                <th width="23%">Subject</th>
+                <th width="40%">Message</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php
+              if ($num_messages > 0) {
+                //Loop through all table rows safely using htmlspecialchars to prevent XSS
+                while ($row = mysqli_fetch_assoc($messages_result)) {
+                  echo "<tr>";
+                  echo "<td class='msg-from'>" . htmlspecialchars($row['message_from']) . "</td>";
+                  echo "<td class='msg-date'>" . htmlspecialchars($row['message_date']) . "</td>";
+                  echo "<td class='msg-time'>" . htmlspecialchars($row['message_time']) . "</td>";
+                  echo "<td class='msg-subject'>" . htmlspecialchars($row['message_subject']) . "</td>";
+                  echo "<td class='msg-text'>" . htmlspecialchars($row['message_text']) . "</td>";
+                  echo "</tr>";
+                }
+              } else {
+                echo "<tr><td colspan='5' class='empty-inbox'>No messages found in your inbox.</td></tr>";
+              }
+              mysqli_free_result($messages_result);
+              mysqli_close($link);
+              ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="footer">
+        <div class="bottom_addr">&copy; 2026 Saceanu Ionut Sorin. All Rights Reserved</div>
+      </div>
     </div>
   </div>
 </body>

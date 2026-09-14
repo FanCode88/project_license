@@ -2,10 +2,6 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-if (session_status() === PHP_SESSION_NONE) {
-  session_start();
-}
-
 require_once('qrlib.php');
 require_once('auth.php');
 require_once('connection/config.php');
@@ -97,50 +93,6 @@ if (!file_exists($qr_dir)) {
   <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
   <link href="assets/css/style.css" rel="stylesheet">
-
-  <style>
-    .img-thumbnail {
-      transition: .3s;
-      border-radius: 10px;
-    }
-
-    .img-thumbnail:hover {
-      transform: scale(1.08);
-    }
-
-    .qty-control {
-      width: 130px;
-      margin: 0 auto;
-    }
-
-    .qty-control input {
-      text-align: center;
-      font-weight: bold;
-    }
-
-    .book-a-table-btn {
-      background: #ffb03b;
-      color: #fff;
-      border-radius: 50px;
-      margin: 0 0 0 20px;
-      padding: 10px 25px;
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 1px;
-      transition: 0.3s;
-      white-space: nowrap;
-    }
-
-    .pagination .page-link {
-      color: #ffb03b;
-    }
-
-    .pagination .page-item.active .page-link {
-      background-color: #ffb03b;
-      border-color: #ffb03b;
-      color: #fff;
-    }
-  </style>
 </head>
 
 <body>
@@ -220,7 +172,7 @@ if (!file_exists($qr_dir)) {
                 $photo_encoded = str_replace(' ', '%20', $food_photo);
                 $filename = $qr_dir . 'qr_' . $cart_id . '.png';
 
-                // Datele incluse in QR: Ingrediente + Pret unitar + Cost Total
+                // Datele incluse in QR
                 $qr_content = "Produs: " . $food_name . "\n" .
                   "Ingrediente: " . $food_description . "\n" .
                   "Pret unitar: " . $currency_symbol . number_format($food_price, 2) . "\n" .
@@ -309,8 +261,6 @@ if (!file_exists($qr_dir)) {
 
   <!-- Scripturi JavaScript externe -->
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-  <!-- Includerea fișierului de validare și funcții JS -->
   <script src="assets/js/main.js"></script>
 
   <!-- Script inline pentru populating modal -->
@@ -325,8 +275,43 @@ if (!file_exists($qr_dir)) {
           document.getElementById('modalIngredients').textContent = triggerImage.getAttribute('data-ingredients');
         });
       }
+
+      // Funcționalitate buton Back to Top
+      let backtotop = document.querySelector('.back-to-top');
+      if (backtotop) {
+        const toggleBacktotop = () => {
+          if (window.scrollY > 100) {
+            backtotop.classList.add('active');
+          } else {
+            backtotop.classList.remove('active');
+          }
+        };
+        window.addEventListener('load', toggleBacktotop);
+        window.addEventListener('scroll', toggleBacktotop);
+      }
     });
   </script>
+
+  <!-- ======= Footer-ul actualizat ======= -->
+  <footer id="footer">
+    <div class="container">
+      <h3>Deluxe Restaurant</h3>
+      <p>Best premium multicuisine Restaurant in Craiova, Romania. Flavour from around the world straight to your table.
+      </p>
+      <div class="footer-divider"></div>
+      <div class="copyright">
+        &copy; Copyright <strong><span>Deluxe</span></strong>. 2026 Saceanu Ionut Sorin All Rights Reserved
+      </div>
+      <div class="credits">
+        Designed by <a href="#">Saceanu Ionut Sorin</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Buton Back to Top -->
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
 </body>
 
 </html>
